@@ -13,6 +13,8 @@ typedef struct token{
 		num number;
 		char op;
 	}data;
-};
+}token;
+
+token getnext(char *string);
 
 #endif 
