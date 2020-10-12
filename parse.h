@@ -18,6 +18,6 @@ typedef struct token{
 }token;
 
 void inittok(token *t);
-token getnext(char *string);
+token parse(char *string);
 
 #endif 

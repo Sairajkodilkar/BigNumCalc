@@ -7,6 +7,7 @@
 #define _NUM
 
 #include <stdio.h>
+#include <stdlib.h>
 
 // Max digit length in one node
 #define DIG_LEN 8 
@@ -26,6 +27,8 @@ typedef struct num{
 
 void initnum(num *one);
 void insert_digit(num *one, int dig);
+void printnum(num one);
+void erasenum(num *one);
 num add(num one ,num two);
 num sub(num one, num two);
 num multiply(num one, num two);

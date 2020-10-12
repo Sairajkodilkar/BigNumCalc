@@ -8,10 +8,11 @@ void insert_digit(num *, int );
 token parse(char *str){
 	static int i = 0;
 	static int prev = START;
+	static char op;
 	int curr, count = 0;
 	num number;
-	int j = 0;
-	char buf[DIG_LEN + 1], op;
+	static int j = 0;
+	char buf[DIG_LEN + 1];
 	token t;
 
 	if(prev == END){
@@ -37,11 +38,15 @@ token parse(char *str){
 						return t;
 						break;
 
-					case NUMBER: case FRAC:
+					case NUMBER: 
 						buf[j] = '\0';
 						insert_digit(&number, atoi(buf)); 
+						t.type = NUMBER;
+						t.data.number = number;
+						i++;
 						j = 0;
 						prev = curr;
+						return t;
 						break;
 
 					case ERR:
@@ -50,12 +55,12 @@ token parse(char *str){
 						i++;
 						return t;
 						break;
+
 					default:
 						prev = curr;
 						i++;
 						break;
 				}
-
 				break;
 			case '0': case '1': case '2': case '3': case '4':
 			case '5': case '6': case '7': case '8': case '9':
@@ -63,7 +68,6 @@ token parse(char *str){
 				switch(prev){
 					case START: case SPACE:
 						initnum(&number);
-						count = 0;
 						j = 0;
 						buf[j++] = str[i++];
 						prev = curr;
@@ -73,7 +77,6 @@ token parse(char *str){
 						t.type = OPERATOR;
 						t.data.op = op; 
 						initnum(&number); //new number started
-						count = 0;
 						j = 0;
 						buf[j++] = str[i++];
 						prev = curr;
@@ -84,19 +87,8 @@ token parse(char *str){
 						if(j >= DIG_LEN){
 							buf[j] = '\0';
 							insert_digit(&number, atoi(buf)); 
-							count++; //digit count
 							j = 0;
 						}
-						buf[j++] = str[i++];
-						prev = curr;
-						break;
-
-					case FRAC:
-						buf[j] = '\0';
-						insert_digit(&number, atoi(buf)); 
-						count++; //digit count
-						j = 0;
-						t.number.point = count;
 						buf[j++] = str[i++];
 						prev = curr;
 						break;
@@ -106,53 +98,11 @@ token parse(char *str){
 						prev = curr;
 						i++;
 						return t;
-
-					default:
-						prev = curr;
-						i++;
-				}
-			case '.':
-				curr = FRAC;
-				switch(prev){
-					case START: case SPACE:
-						initnum(&number);
-						count = 0;
-						buf[j++] = '0';
-						i++;
-						prev = curr;
-						break;
-
-					case OPERATOR: 
-						t.type = OPERATOR;
-						t.data.op = op;
-						initnum(&number);
-						count = 0;
-						buf[j++] = '0';
-						i++;
-						prev = curr;
-						return t;
-						break;
-
-					case FRAC: 
-						t.type = ERR; //parsing error
-						prev = curr;
-						i++;
-						return t;
-						break;
-
-					case ERR: 
-						t.type = ERR;
-						prev = curr;
-						i++;
-						return t;
-						break;
-
-					case NUMBER:
-						i++;
-						prev = curr;
 						break;
 
 					default:
+						prev = curr;
+						i++;
 						break;
 				}
 				break;
@@ -172,17 +122,6 @@ token parse(char *str){
 						t.type = NUMBER;
 						t.data.number = number;
 						prev = curr;
-						return t;
-						break;
-
-					case FRAC:  // this simply means number is like 123. so can ignore fraction which is zero
-						buf[j] = '\0';
-						insert_digit(&number, atoi(buf)); 
-						j = 0;
-						op = str[i++];
-						t.type = NUMBER;
-						prev = curr;
-						t.data.num = number;
 						return t;
 						break;
 
@@ -222,17 +161,7 @@ token parse(char *str){
 						insert_digit(&number, atoi(buf)); 
 						j = 0;
 						t.type = NUMBER;
-						t.data.num = number;
-						prev = curr;
-						return t;
-						break;
-
-					case FRAC:
-						buf[j] = '\0';
-						insert_digit(&number, atoi(buf)); 
-						j = 0;
-						t.type = NUMBER;
-						t.data.num = number;
+						t.data.number = number;
 						prev = curr;
 						return t;
 						break;
@@ -247,9 +176,15 @@ token parse(char *str){
 					default:
 						prev = curr;
 						i++;
+						t.type = END;
+						return t;
 						break;
 				}
+				break;
 			default:
+				prev = ERR;
+				t.type = ERR;
+				return t;
 				break;
 		}
 	}
