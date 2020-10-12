@@ -3,16 +3,18 @@
 
 //enum state {START, OPERATOR, NUMBER, FRAC, END, ERR};
 
-void insert_digit(num *, int );
+void insertbuf(num *, char *, int);
 
 token parse(char *str){
 	static int i = 0;
 	static int prev = START;
 	static char op;
-	int curr, count = 0;
+	int curr, size = 1024;
 	num number;
 	static int j = 0;
-	char buf[DIG_LEN + 1];
+	static char *buf = NULL ;
+	if(i == 0)
+		buf = (char *)malloc(sizeof(char) * size);
 	token t;
 
 	if(prev == END){
@@ -40,7 +42,7 @@ token parse(char *str){
 
 					case NUMBER: 
 						buf[j] = '\0';
-						insert_digit(&number, atoi(buf)); 
+						insertbuf(&number, buf, j);
 						t.type = NUMBER;
 						t.data.number = number;
 						i++;
@@ -79,17 +81,17 @@ token parse(char *str){
 						initnum(&number); //new number started
 						j = 0;
 						buf[j++] = str[i++];
+						buf[j] = '\0';
 						prev = curr;
-						return t;
 						break;
 
 					case NUMBER:
-						if(j >= DIG_LEN){
-							buf[j] = '\0';
-							insert_digit(&number, atoi(buf)); 
-							j = 0;
+						if(j >= size){
+							size += 1024;
+							buf = realloc(buf, size);
 						}
 						buf[j++] = str[i++];
+						buf[j] = '\0';
 						prev = curr;
 						break;
 
@@ -116,7 +118,7 @@ token parse(char *str){
 
 					case NUMBER:
 						buf[j] = '\0';
-						insert_digit(&number, atoi(buf)); 
+						insertbuf(&number, buf, j);
 						j = 0;
 						op = str[i++];
 						t.type = NUMBER;
@@ -158,7 +160,7 @@ token parse(char *str){
 
 					case NUMBER:
 						buf[j] = '\0';
-						insert_digit(&number, atoi(buf)); 
+						insertbuf(&number, buf, j);
 						j = 0;
 						t.type = NUMBER;
 						t.data.number = number;
@@ -191,4 +193,28 @@ token parse(char *str){
 	t.type = ERR;
 	return t;
 }
+
+
+void insertbuf(num *one, char *buf, int j){
+	int offset = j - DIG_LEN;
+	int n;
+	while(1){
+		if(offset <= 0){
+			offset = 0;
+			n = atoi(&buf[offset]);
+			insert_digit(one, atoi(&buf[offset]));
+			break;
+		}
+		n = atoi(&buf[offset]);
+		insert_digit(one, n);
+		buf[offset] = '\0';
+		offset -= DIG_LEN;
+	}
+	reverse(one);
+	return;
+}
+
+
+
+
 
