@@ -184,10 +184,10 @@ num multiply(num one, num two){
 	initnum(&garbage);
 	node *temp;
 	temp = one.part;
-	int order = 1
 	while(temp != NULL){
 		garbage = prev;
 		result = __multiply(temp, two.part);
+		insert_digit(&prev, 0);
 		prev = add(result, prev);
 
 		/* to prevent memory leak */

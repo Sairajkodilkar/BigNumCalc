@@ -10,7 +10,7 @@ int main(){
 	int j = 0;
 
 	while(1){
-		t = parse("111111111 * 111111111");
+		t = parse("111111111 * -111111111");
 		if(t.type == NUMBER){
 			if(j == 0){
 				one = t.data.number;
@@ -23,9 +23,9 @@ int main(){
 			break;
 		j++;
 	}
-	result = multiply(one, two);
+	//result = multiply(one, two);
 	printnum(one);
 	printnum(two);
-	printnum(result);
+	//printnum(result);
 }
 
