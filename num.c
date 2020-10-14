@@ -99,10 +99,11 @@ num add(num one, num two){
 		x_d = (x == NULL)?0:x->digit;
 		y_d = (y == NULL)?0:y->digit;
 		r = x_d + y_d + carry;
-		if(r > MAX_DIG){
-			carry = r % MAX_DIG;
-			r = r - carry;
-		}
+		if(r > MAX_DIG)
+			carry = r / 100000000;
+		else
+			carry = 0;
+		r = r % 100000000;
 		insert_digit(&result, r);
 
 		x = (x == NULL)?x:x->next;
@@ -164,11 +165,13 @@ num __multiply(node *one, node *two){
 
 		dig2 = temp ? temp->digit : 0;
 		r = (long)dig2 * (long)dig + carry;
+		//printf("before %ld\n", r);
 
 		carry = r / 100000000;
 		r = r % 100000000;
+		//printf("after %ld\n", r);
 
-		temp = temp->next;
+		temp = temp == NULL ? NULL : temp->next;
 
 		insert_digit(&result, (int)r);
 	}
@@ -179,6 +182,8 @@ num __multiply(node *one, node *two){
 
 num multiply(num one, num two){
 	num result, prev, garbage;
+	int i, j;
+	i = j = 0;
 	initnum(&result);
 	initnum(&prev);
 	initnum(&garbage);
@@ -187,17 +192,20 @@ num multiply(num one, num two){
 	while(temp != NULL){
 		garbage = prev;
 		result = __multiply(temp, two.part);
-		insert_digit(&prev, 0);
+		while(j < i){
+			insert_digit(&result, 0);
+			j++;
+		}
 		prev = add(result, prev);
-
+		
 		/* to prevent memory leak */
 		erasenum(&result);
 		initnum(&result);
 		erasenum(&garbage);
 		initnum(&garbage);
 
-
 		temp = temp->next;
+		i++;
 	}
 	prev.sign = one.sign * two.sign;
 	return prev;

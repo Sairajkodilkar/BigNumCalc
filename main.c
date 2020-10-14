@@ -7,10 +7,13 @@
 int main(){
 	token t;
 	num one, two, result;
+	initnum(&one);
+	initnum(&two);
+	initnum(&result);
 	int j = 0;
 
 	while(1){
-		t = parse("111111111 * -111111111");
+		t = parse("1111111111111111 * 111111111111");
 		if(t.type == NUMBER){
 			if(j == 0){
 				one = t.data.number;
@@ -21,11 +24,18 @@ int main(){
 		}
 		if(t.type == END)
 			break;
+		if(t.type == OPERATOR)
+			;
+		//	printf("%c\n", t.data.op);
 		j++;
 	}
-	//result = multiply(one, two);
+
+	result = multiply(one, two);
+	//result = add(one, two);
+	
 	printnum(one);
 	printnum(two);
-	//printnum(result);
+	printnum(result);
+	
 }
 

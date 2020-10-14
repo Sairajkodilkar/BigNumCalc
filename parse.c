@@ -79,11 +79,11 @@ token parse(char *str){
 						t.type = OPERATOR;
 						t.data.op = op; 
 						initnum(&number); //new number started
-						//number.sign = sign
 						j = 0;
 						buf[j++] = str[i++];
 						buf[j] = '\0';
 						prev = curr;
+						return t;
 						break;
 
 					case NUMBER:
@@ -110,6 +110,7 @@ token parse(char *str){
 				}
 				break;
 			case '+': case '-': case '*': case '/': case '%':
+			case '(': case ')':
 				curr = OPERATOR;
 				switch(prev){
 					case START: case SPACE:
@@ -118,14 +119,9 @@ token parse(char *str){
 						break;
 						
 					case OPERATOR:
-						if(str[i] != '-' || str[i] != '+'){
-							t.type = ERR;
-							return t;
-						}
 						t.type = OPERATOR;
 						t.data.op = op;
 						op = str[i];
-						//sign = op == '-'? -1 : 1;
 						prev = curr;
 						i++;
 						return t;
