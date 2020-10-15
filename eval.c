@@ -1,6 +1,7 @@
 #include "num.h"
 #include "parse.h"
-#include "nstack.c"
+#include "nstack.h"
+#include "cstack.h"
 
 enum precedence {LOW, ADDSUB, MULDIV, MODULO, BRACKET};
 
@@ -96,7 +97,7 @@ num eval(char *str){
 				break;
 
 			case NUMBER:
-				if(isfull(&numbers)){
+				if(nisfull(&numbers)){
 					cleannstack(&numbers);
 					return error;
 				}
@@ -142,18 +143,17 @@ num eval(char *str){
 					npush(&numbers, result);
 				}
 				if(nisempty(&numbers)){
-					cleannstack(&numbers);
 					return error;
 				}
 				result = npop(&numbers);
 				return result;
 				break;
 			case ERR:
-				cleanstack(&numbers);
+				cleannstack(&numbers);
 				return error;
 				break;
 			default:
-				cleanstack(&numbers);
+				cleannstack(&numbers);
 				return error;
 				break;
 

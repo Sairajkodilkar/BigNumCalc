@@ -10,8 +10,8 @@ typedef struct cnode{
 typedef struct cnode *cstack;
 
 void initcstack(cstack *);
-int nisempty(cstack *);
-int nisfull(cstack *);
-char npop(cstack *);
-void npush(cstack *, char );
+int cisempty(cstack *);
+int cisfull(cstack *);
+char cpop(cstack *);
+void cpush(cstack *, char );
 
