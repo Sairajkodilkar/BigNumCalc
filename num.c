@@ -90,6 +90,16 @@ void initnum(num *one){
 
 
 num add(num one, num two){
+
+	if(one.sign == -1 && two.sign == 1){
+		one.sign = 1; //changing locally hence no need effect on original number
+		return sub(two, one); //two - one
+	}
+	if(one.sign == 1 && two.sign == -1){
+		two.sign = 1;
+		return sub(one, two); //one - two
+	}
+
 	num result;
 	initnum(&result);
 	node *x = one.part, *y = two.part;
@@ -110,13 +120,25 @@ num add(num one, num two){
 		y = (y == NULL)?y:y->next;
 	}
 	reverse(&result);
-	return result;
 
+	if(one.sign == -1 && two.sign == -1){
+		result.sign = -1;
+	}
+
+	return result;
 }
 
-/*assumes one > two
- * TODO: support for negative*/
 num sub(num one, num two){
+	if(one.sign == -1 && two.sign == 1){
+		two.sign = -1;
+		return add(one, two);
+	}
+
+	if(one.sign == 1 && two.sign == -1){
+		two.sign = 1;
+		return add(one, two);
+	}
+
 	num result;
 	node *x , *y;
 	initnum(&result);

@@ -13,7 +13,7 @@ int main(){
 	int j = 0;
 
 	while(1){
-		t = parse("1111111111111111 * 111111111111");
+		t = parse("123 * 123");
 		if(t.type == NUMBER){
 			if(j == 0){
 				one = t.data.number;
@@ -30,8 +30,10 @@ int main(){
 		j++;
 	}
 
-	result = multiply(one, two);
-	//result = add(one, two);
+	//result = multiply(one, two);
+	one.sign = -1;
+	two.sign = 1;
+	result = sub(one, two);
 	
 	printnum(one);
 	printnum(two);

@@ -10,4 +10,6 @@ OBJECT:$(SOURCE)
 %.o:%.c $(HEADER)
 	$(CC) -c -Wall -g $^
 
+clean:
+	rm *.gch $(OBJECT) calc
 
