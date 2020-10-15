@@ -1,0 +1,5 @@
+*.o
+calc
+gdbcmd1*
+*.gch
+

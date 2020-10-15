@@ -16,6 +16,15 @@ void insert_digit(num *one, int dig){
 	one->part->digit = dig;
 }
 
+/* void reverse(num *one){
+ * use:
+ * 		reverse the digits in the number
+ * precondition:
+ * 		one: pointer to the num
+ * postcondition:
+ * 		digits of one are reversed
+ */
+
 void reverse(num *one){
 	if(one->part == NULL || one->part->next == NULL){
 		return;
@@ -31,6 +40,16 @@ void reverse(num *one){
 	one->part->next = temp;
 }
 
+/* int __isgreater(node *one, node *two)
+ * use:
+ * 		supporting function for the isgreater(num one, num two)
+ * 		NOTE: for internal use only
+ * precondition:
+ * 		one, two: pointer to the node
+ * postcondition:
+ * 		if the digits in one > two 1 is returned
+ * 		else 0 is returned
+ */
 int __isgreater(node *one, node *two){
 	if(one == NULL && two != NULL)
 		return 0;
@@ -44,11 +63,30 @@ int __isgreater(node *one, node *two){
 		return one->digit > two->digit;
 }
 
+/* int isgreater(num one, num two)
+ * use:
+ * 		checks if one is greater than two
+ * precondition:
+ * 		one, two: are numbers
+ * postcondition:
+ * 		if one > two 1 is returned
+ * 		else 0
+ */
 int isgreater(num one, num two){
 	return __isgreater(one.part, two.part);
 }
 
 
+/* void __printnum(node *start, int sign)
+ * use:
+ * 		supporting function for the printnum(num one)
+ * 		NOTE: for internal use only
+ * precondition:
+ * 		start is the pointer to the node
+ * 		sign is the sign of number allowed : -1 or 1
+ * postcondition:
+ * 		prints the number on stdout
+ */
 void __printnum(node *start, int sign){
 	if(start == NULL){
 		if(sign == -1)
@@ -59,6 +97,14 @@ void __printnum(node *start, int sign){
 	printf("%d", start->digit);
 	return;
 }
+/* void printnum(num one)
+ * use:
+ * 		prints the given num
+ * precondition:
+ * 		one : number to be printed
+ * postcondition:
+ * 		prints the number on stdout
+ */
 
 void printnum(num one){
 	if(one.part == NULL)
@@ -68,6 +114,15 @@ void printnum(num one){
 }
 
 
+/* erasenum(num *one)
+ * use:
+ * 		frees the malloced memory occupied by the num
+ * 		user should call it before exiting
+ * precondition:
+ * 		one is the pointer to the num
+ * postcondition:
+ *		number is dellocated
+ */
 void erasenum(num *one){
 	node *temp = one->part;
 	node *prev;
@@ -81,6 +136,15 @@ void erasenum(num *one){
 
 
 
+/* void initnum(num *one)
+ * use:
+ * 		initialise the number;
+ * 		user should call it before using the new number
+ * precondition:
+ * 		one: pointer to the num
+ * postconditon:
+ * 		number is initialised with sign 1
+ */
 void initnum(num *one){
 	one->part = NULL;
 	one->point = 0;
@@ -89,8 +153,17 @@ void initnum(num *one){
 }
 
 
+/* num add(num one, num two)
+ * use:
+ * 		add the number one and two
+ * precondition:
+ * 		one, two: number to be added
+ * postcondition:
+ * 		return the num containing result of addition
+ */
 num add(num one, num two){
 
+	/* checks if sign are same or different */
 	if(one.sign == -1 && two.sign == 1){
 		one.sign = 1; //changing locally hence no need effect on original number
 		return sub(two, one); //two - one
@@ -127,8 +200,17 @@ num add(num one, num two){
 
 	return result;
 }
+/* num sub(num one, num two)
+ * use:
+ * 		subracts the number two from one
+ * precondition:
+ * 		one, two: numbers to be subtracted
+ * postcondition:
+ * 		return the num containing result of subtraction
+ */
 
 num sub(num one, num two){
+	/* checks if sign are same or different */
 	if(one.sign == -1 && two.sign == 1){
 		two.sign = -1;
 		return add(one, two);
@@ -172,8 +254,14 @@ num sub(num one, num two){
 	return result;
 }
 
-/* supporting function for multiply 
- * this multiplies one with each node in two
+/* num __multiply(node *one, node *two)
+ * use:
+ * 		supporting function for multiply 
+ * 		this multiplies one with each node in two
+ * precondition:
+ * 		one, two: pointer to the node
+ * postcontion:
+ * 		the result of multiplication is returned in number
  */
 
 num __multiply(node *one, node *two){
@@ -202,6 +290,15 @@ num __multiply(node *one, node *two){
 }
 
 
+/* num multiply(num one, num two)
+ * use:
+ * 		supporting function for multiply 
+ * 		this multiplies one with each node in two
+ * precondition:
+ * 		one, two: pointer to the node
+ * postcontion:
+ * 		the result of multiplication is returned in number
+ */
 num multiply(num one, num two){
 	num result, prev, garbage;
 	int i, j;

@@ -1,0 +1,177 @@
+#include "num.h"
+#include "parse.h"
+#include "nstack.c"
+
+enum precedence {LOW, ADDSUB, MULDIV, MODULO, BRACKET};
+
+void cleannstack(nstack *);
+
+num eval(char *str){
+	nstack numbers;
+	cstack operators;
+
+	token t;
+	num result, one, two, error;
+
+	int currpre = LOW, prevpre, bracket = 0;
+	char op;
+
+	initnum(&one);
+	initnum(&two);
+	initnstack(&numbers);
+	initcstack(&operators);
+
+	error.sign = 0;
+
+	while(1){
+		t = parse(str);
+		switch(t.type){
+			case OPERATOR:
+				prevpre = currpre;
+				switch(t.data.op){
+					case '+': case '-':
+						currpre = ADDSUB + bracket;
+						break;
+					case '*': case '/':
+						currpre = MULDIV + bracket;
+						break;
+					case '%':
+						currpre = MODULO + bracket;
+						break;
+					case '(':
+						bracket += BRACKET;
+						continue;
+						break;
+					case ')':
+						bracket -= BRACKET;
+						continue;
+						break;
+					default:
+						return error;
+				}
+				if(currpre <= prevpre){
+					while(!cisempty(&operators)){
+						op = cpop(&operators);
+
+						if(nisempty(&numbers))
+							return error;
+						two = npop(&numbers);
+						if(nisempty(&numbers))
+							return error;
+						one = npop(&numbers);
+
+						switch(op){
+							case '+':
+								result = add(one, two);
+								break;
+							case '-':
+								result= sub(one, two);
+								break;
+							case '*':
+								result = multiply(one, two);
+								break;
+							case '/':
+								result = divide(one, two);
+								break;
+							case '%':
+								//result = modulo(one, two);
+								break;
+							default:
+								return error;
+								break;
+						}
+						/* erasing number that has been popped */
+						erasenum(&one);
+						erasenum(&two);
+						initnum(&one);
+						initnum(&two);
+						if(nisfull(&numbers)){
+							cleannstack(&numbers);
+							return error;
+						}
+						npush(&numbers, result);
+					}
+				}
+				cpush(&operators, op);
+				break;
+
+			case NUMBER:
+				if(isfull(&numbers)){
+					cleannstack(&numbers);
+					return error;
+				}
+				npush(&numbers, t.data.number);
+				break;
+
+			case END:
+				while(!cisempty(&operators)){
+					op = cpop(&operators);
+
+					if(nisempty(&numbers))
+						return error;
+					two = npop(&numbers);
+					if(nisempty(&numbers))
+						return error;
+					one = npop(&numbers);
+
+					switch(op){
+						case '+':
+							result = add(one, two);
+							break;
+						case '-':
+							result= sub(one, two);
+							break;
+						case '*':
+							result = multiply(one, two);
+							break;
+						case '/':
+							result = divide(one, two);
+							break;
+						case '%':
+							//result = modulo(one, two);
+							break;
+						default:
+							return error;
+							break;
+					}
+					/* erasing number that has been popped */
+					erasenum(&one);
+					erasenum(&two);
+					initnum(&one);
+					initnum(&two);
+					npush(&numbers, result);
+				}
+				if(nisempty(&numbers)){
+					cleannstack(&numbers);
+					return error;
+				}
+				result = npop(&numbers);
+				return result;
+				break;
+			case ERR:
+				cleanstack(&numbers);
+				return error;
+				break;
+			default:
+				cleanstack(&numbers);
+				return error;
+				break;
+
+		}
+	}
+}
+
+void cleannstack(nstack *numbers){
+	num one;
+	while(!nisempty(numbers)){
+		one = npop(numbers);
+		erasenum(&one);
+	}
+	return;
+}
+
+
+
+
+
+

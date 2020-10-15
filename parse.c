@@ -18,6 +18,8 @@ token parse(char *str){
 	token t;
 
 	if(prev == END){
+		free(buf);
+		i = 0;
 		t.type = END;
 		return t;
 	}
@@ -59,7 +61,7 @@ token parse(char *str){
 						break;
 
 					default:
-						prev = curr;
+						prev = ERR;
 						i++;
 						break;
 				}
@@ -104,7 +106,7 @@ token parse(char *str){
 						break;
 
 					default:
-						prev = curr;
+						prev = ERR;
 						i++;
 						break;
 				}
@@ -117,7 +119,7 @@ token parse(char *str){
 						op = str[i++];
 						prev = curr;
 						break;
-						
+
 					case OPERATOR:
 						t.type = OPERATOR;
 						t.data.op = op;
@@ -146,7 +148,7 @@ token parse(char *str){
 						break;
 
 					default:
-						prev = curr;
+						prev = ERR;
 						i++;
 						break;
 				}
@@ -155,6 +157,8 @@ token parse(char *str){
 				curr = END;
 				switch(prev){
 					case START: case SPACE:
+						i = 0;
+						free(buf);
 						t.type = END;
 						prev = curr;
 						i++;
@@ -187,10 +191,9 @@ token parse(char *str){
 						break;
 
 					default:
-						prev = curr;
+						prev = ERR;
 						i++;
-						t.type = END;
-						return t;
+						t.type = ERR;
 						break;
 				}
 				break;
@@ -227,23 +230,23 @@ void insertbuf(num *one, char *buf, int j){
 
 
 /*
-void insertbuf(num *one, char *buf, int j){
-	int offset = j - DIG_LEN;
-	int n;
-	while(1){
-		if(offset <= 0){
-			offset = 0;
-			n = atoi(&buf[offset]);
-			insert_digit(one, atoi(&buf[offset]));
-			break;
-		}
-		n = atoi(&buf[offset]);
-		insert_digit(one, n);
-		buf[offset] = '\0';
-		offset -= DIG_LEN;
-	}
-	reverse(one);
-	return;
-}
-*/
+   void insertbuf(num *one, char *buf, int j){
+   int offset = j - DIG_LEN;
+   int n;
+   while(1){
+   if(offset <= 0){
+   offset = 0;
+   n = atoi(&buf[offset]);
+   insert_digit(one, atoi(&buf[offset]));
+   break;
+   }
+   n = atoi(&buf[offset]);
+   insert_digit(one, n);
+   buf[offset] = '\0';
+   offset -= DIG_LEN;
+   }
+   reverse(one);
+   return;
+   }
+   */
 
