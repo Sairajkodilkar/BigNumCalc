@@ -1,9 +1,27 @@
 #include <stdio.h>
-#include "num.h"
-#include "parse.h"
+#include "eval.h"
 
 /* currently operate on int */
 
+
+int main(){
+	num result;
+	result = eval("( 111111111 - 111111111 )* 2");
+	if(result.sign == 0){
+		printf("bad expr\n");
+		return 1;
+	}
+	printnum(result);
+	erasenum(&result);
+}
+
+
+
+
+
+
+
+/*
 int main(){
 	token t;
 	num one, two, result;
@@ -40,4 +58,4 @@ int main(){
 	printnum(result);
 	
 }
-
+*/

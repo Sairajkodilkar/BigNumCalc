@@ -1,7 +1,4 @@
-#include "num.h"
-#include "parse.h"
-#include "nstack.h"
-#include "cstack.h"
+#include "eval.h"
 
 enum precedence {LOW, ADDSUB, MULDIV, MODULO, BRACKET};
 
@@ -12,7 +9,7 @@ num eval(char *str){
 	cstack operators;
 
 	token t;
-	num result, one, two, error;
+	num result, one, two, error, warning;
 
 	int currpre = LOW, prevpre, bracket = 0;
 	char op;
@@ -22,15 +19,18 @@ num eval(char *str){
 	initnstack(&numbers);
 	initcstack(&operators);
 
-	error.sign = 0;
+	error.sign = 2;
+	warning.sign = 3;
 
 	while(1){
 		t = parse(str);
 		switch(t.type){
 			case OPERATOR:
+				//printf("operator %c\n", t.data.op);
 				prevpre = currpre;
 				switch(t.data.op){
 					case '+': case '-':
+						//printf("inside\n");
 						currpre = ADDSUB + bracket;
 						break;
 					case '*': case '/':
@@ -51,6 +51,7 @@ num eval(char *str){
 						return error;
 				}
 				if(currpre <= prevpre){
+					//printf("inside checker \n");
 					while(!cisempty(&operators)){
 						op = cpop(&operators);
 
@@ -63,6 +64,7 @@ num eval(char *str){
 
 						switch(op){
 							case '+':
+								//printf("add\n");
 								result = add(one, two);
 								break;
 							case '-':
@@ -72,7 +74,7 @@ num eval(char *str){
 								result = multiply(one, two);
 								break;
 							case '/':
-								result = divide(one, two);
+								//result = divide(one, two);
 								break;
 							case '%':
 								//result = modulo(one, two);
@@ -93,10 +95,12 @@ num eval(char *str){
 						npush(&numbers, result);
 					}
 				}
-				cpush(&operators, op);
+				//printf("pushed operator\n");
+				cpush(&operators, t.data.op);
 				break;
 
 			case NUMBER:
+				//printf("number pushed\n");
 				if(nisfull(&numbers)){
 					cleannstack(&numbers);
 					return error;
@@ -107,6 +111,7 @@ num eval(char *str){
 			case END:
 				while(!cisempty(&operators)){
 					op = cpop(&operators);
+					//printf("operator is%d\n", op);
 
 					if(nisempty(&numbers))
 						return error;
@@ -126,7 +131,7 @@ num eval(char *str){
 							result = multiply(one, two);
 							break;
 						case '/':
-							result = divide(one, two);
+							//result = divide(one, two);
 							break;
 						case '%':
 							//result = modulo(one, two);

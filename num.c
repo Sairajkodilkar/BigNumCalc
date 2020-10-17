@@ -16,6 +16,9 @@ void insert_digit(num *one, int dig){
 	one->part->digit = dig;
 }
 
+
+
+
 /* void reverse(num *one){
  * use:
  * 		reverse the digits in the number
@@ -24,7 +27,6 @@ void insert_digit(num *one, int dig){
  * postcondition:
  * 		digits of one are reversed
  */
-
 void reverse(num *one){
 	if(one->part == NULL || one->part->next == NULL){
 		return;
@@ -39,6 +41,8 @@ void reverse(num *one){
 	}
 	one->part->next = temp;
 }
+
+
 
 /* int __isgreater(node *one, node *two)
  * use:
@@ -63,6 +67,8 @@ int __isgreater(node *one, node *two){
 		return one->digit > two->digit;
 }
 
+
+
 /* int isgreater(num one, num two)
  * use:
  * 		checks if one is greater than two
@@ -75,6 +81,7 @@ int __isgreater(node *one, node *two){
 int isgreater(num one, num two){
 	return __isgreater(one.part, two.part);
 }
+
 
 
 /* void __printnum(node *start, int sign)
@@ -97,6 +104,8 @@ void __printnum(node *start, int sign){
 	printf("%d", start->digit);
 	return;
 }
+
+
 /* void printnum(num one)
  * use:
  * 		prints the given num
@@ -107,11 +116,14 @@ void __printnum(node *start, int sign){
  */
 
 void printnum(num one){
-	if(one.part == NULL)
+	if(one.part == NULL){
 		printf("0");
+		return;
+	}
 	__printnum(one.part, one.sign);
 	printf("\n");
 }
+
 
 
 /* erasenum(num *one)
@@ -125,6 +137,7 @@ void printnum(num one){
  */
 void erasenum(num *one){
 	node *temp = one->part;
+	one->part = NULL;
 	node *prev;
 	while(temp != NULL){
 		prev = temp->next;
@@ -133,7 +146,6 @@ void erasenum(num *one){
 	}
 	return;
 }
-
 
 
 /* void initnum(num *one)
@@ -165,7 +177,7 @@ num add(num one, num two){
 
 	/* checks if sign are same or different */
 	if(one.sign == -1 && two.sign == 1){
-		one.sign = 1; //changing locally hence no need effect on original number
+		one.sign = 1; //changing locally hence no effect on original number
 		return sub(two, one); //two - one
 	}
 	if(one.sign == 1 && two.sign == -1){
@@ -275,11 +287,9 @@ num __multiply(node *one, node *two){
 
 		dig2 = temp ? temp->digit : 0;
 		r = (long)dig2 * (long)dig + carry;
-		//printf("before %ld\n", r);
 
 		carry = r / 100000000;
 		r = r % 100000000;
-		//printf("after %ld\n", r);
 
 		temp = temp == NULL ? NULL : temp->next;
 
@@ -316,7 +326,7 @@ num multiply(num one, num two){
 			j++;
 		}
 		prev = add(result, prev);
-		
+
 		/* to prevent memory leak */
 		erasenum(&result);
 		initnum(&result);

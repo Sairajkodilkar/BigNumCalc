@@ -17,26 +17,26 @@ int cisempty(cstack *n){
 }
 
 
-void cpush(cstack *n, char one){
-	if(isfull(n))
+void cpush(cstack *n, char ch){
+	if(cisfull(n))
 		return;
 	cnode *new;
 	new = (cnode *) malloc(sizeof(cnode));
-	new->one = one;
+	new->ch = ch;
 	new->next = (*n);
 	(*n) = new;
 }
 
 char cpop(cstack *n){
-	char one;
+	char ch;
 	cnode *temp;
-	if(isempty(n))
-		return;
-	one = (*n)->one;
+	if(cisempty(n))
+		return '0';
+	ch = (*n)->ch;
 	temp = (*n);
 	(*n) = (*n)->next;
 	free(temp);
-	return one;
+	return ch;
 }
 
 	

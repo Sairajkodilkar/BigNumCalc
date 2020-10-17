@@ -18,7 +18,7 @@ int nisempty(nstack *n){
 
 
 void npush(nstack *n, num one){
-	if(isfull(n))
+	if(nisfull(n))
 		return;
 	nnode *new;
 	new = (nnode *) malloc(sizeof(nnode));
@@ -30,8 +30,10 @@ void npush(nstack *n, num one){
 num npop(nstack *n){
 	num one;
 	nnode *temp;
-	if(isempty(n))
-		return;
+	if(nisempty(n)){
+		one.sign = 0;
+		return one;
+	}
 	one = (*n)->one;
 	temp = (*n);
 	(*n) = (*n)->next;
