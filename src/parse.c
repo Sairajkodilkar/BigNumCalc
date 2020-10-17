@@ -5,14 +5,18 @@
 
 void insertbuf(num *, char *, int);
 
+/* NOTE :for negative to work number and sign does not have space
+ * 		e.g 123 * - 123 will not work but 123 * -123 does work
+ */
 token parse(char *str){
 	static int i = 0;
 	static int prev = START;
+	static int j = 0;
+	static int op_flag = 2;
 	static char op;
+	static char *buf = NULL ;
 	int curr, size = 1024;
 	num number;
-	static int j = 0;
-	static char *buf = NULL ;
 	if(i == 0)
 		buf = (char *)malloc(sizeof(char) * size);
 	token t;
@@ -71,6 +75,7 @@ token parse(char *str){
 				curr = NUMBER;
 				switch(prev){
 					case START: case SPACE:
+						op_flag = 0;
 						initnum(&number);
 						j = 0;
 						buf[j++] = str[i++];
@@ -78,17 +83,23 @@ token parse(char *str){
 						break;
 
 					case OPERATOR:
-						t.type = OPERATOR;
-						t.data.op = op; 
 						initnum(&number); //new number started
 						j = 0;
 						buf[j++] = str[i++];
 						buf[j] = '\0';
 						prev = curr;
+						if(op_flag >= 2 && op == '-'){
+							number.sign = -1;
+							op_flag = 0;
+							continue;
+						}
+						t.type = OPERATOR;
+						t.data.op = op; 
 						return t;
 						break;
 
 					case NUMBER:
+						op_flag = 0;
 						if(j >= size){
 							size += 1024;
 							buf = realloc(buf, size);
@@ -114,6 +125,7 @@ token parse(char *str){
 			case '+': case '-': case '*': case '/': case '%':
 			case '(': case ')':
 				curr = OPERATOR;
+				op_flag += 1;
 				switch(prev){
 					case START: case SPACE:
 						op = str[i++];
@@ -166,6 +178,7 @@ token parse(char *str){
 						break;
 
 					case OPERATOR:
+						op_flag += 1;
 						t.data.op = op;
 						t.type = OPERATOR;
 						prev = curr;

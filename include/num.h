@@ -27,6 +27,7 @@ typedef struct node{
 typedef struct num{
 	node *part;
 	int point;
+	int count;
 	int sign;
 }num;
 

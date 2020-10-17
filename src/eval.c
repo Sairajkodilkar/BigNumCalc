@@ -26,7 +26,7 @@ num eval(char *str){
 		t = parse(str);
 		switch(t.type){
 			case OPERATOR:
-				//printf("operator %c\n", t.data.op);
+				printf("operator %c\n", t.data.op);
 				prevpre = currpre;
 				switch(t.data.op){
 					case '+': case '-':
@@ -147,7 +147,8 @@ num eval(char *str){
 					initnum(&two);
 					npush(&numbers, result);
 				}
-				if(nisempty(&numbers)){
+				if(nisempty(&numbers) || bracket != 0){
+					printf("error\n");
 					return error;
 				}
 				result = npop(&numbers);

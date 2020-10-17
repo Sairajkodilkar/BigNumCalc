@@ -10,6 +10,7 @@
  */
 void insert_digit(num *one, int dig){
 	node *temp;
+	(one->count)++;
 	temp = one->part;
 	one->part = MALLOCNODE;
 	one->part->next = temp;
@@ -117,7 +118,7 @@ void __printnum(node *start, int sign){
 
 void printnum(num one){
 	if(one.part == NULL){
-		printf("0");
+		printf("0\n");
 		return;
 	}
 	__printnum(one.part, one.sign);
@@ -160,6 +161,7 @@ void erasenum(num *one){
 void initnum(num *one){
 	one->part = NULL;
 	one->point = 0;
+	one->count = 0;
 	one->sign = 1;
 	return;
 }
@@ -266,6 +268,8 @@ num sub(num one, num two){
 	return result;
 }
 
+
+
 /* num __multiply(node *one, node *two)
  * use:
  * 		supporting function for multiply 
@@ -339,7 +343,6 @@ num multiply(num one, num two){
 	prev.sign = one.sign * two.sign;
 	return prev;
 }
-
 
 
 
