@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "num.h"
 
 /* stack for number data type using linkedlist */

@@ -6,7 +6,7 @@
 
 int main(){
 	num result;
-	result = eval("( 111111111 - 111111111 )* 2");
+	result = eval("( 111111111 - 222222222 )* 2");
 	if(result.sign == 0){
 		printf("bad expr\n");
 		return 1;
