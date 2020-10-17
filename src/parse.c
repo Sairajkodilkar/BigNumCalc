@@ -3,7 +3,7 @@
 
 //enum state {START, OPERATOR, NUMBER, FRAC, END, ERR};
 
-void insertbuf(num *, char *, int);
+void insertbuf(num *, char *, int, int);
 
 /* NOTE :for negative to work number and sign does not have space
  * 		e.g 123 * - 123 will not work but 123 * -123 does work
@@ -48,7 +48,7 @@ token parse(char *str){
 
 					case NUMBER: 
 						buf[j] = '\0';
-						insertbuf(&number, buf, j);
+						insertbuf(&number, buf, j, 0);
 						t.type = NUMBER;
 						t.data.number = number;
 						i++;
@@ -56,6 +56,14 @@ token parse(char *str){
 						prev = curr;
 						return t;
 						break;
+						
+					case FRAC:
+						t.type = NUMBER;
+						t.data.number = number;
+						i++;
+						j = 0;
+						prev = curr;
+						return t;
 
 					case ERR:
 						t.type = ERR;
@@ -98,7 +106,7 @@ token parse(char *str){
 						return t;
 						break;
 
-					case NUMBER:
+					case NUMBER: case FRAC:
 						op_flag = 0;
 						if(j >= size){
 							size += 1024;
@@ -143,7 +151,7 @@ token parse(char *str){
 
 					case NUMBER:
 						buf[j] = '\0';
-						insertbuf(&number, buf, j);
+						insertbuf(&number, buf, j, 0);
 						j = 0;
 						op = str[i++];
 						t.type = NUMBER;
@@ -178,7 +186,6 @@ token parse(char *str){
 						break;
 
 					case OPERATOR:
-						op_flag += 1;
 						t.data.op = op;
 						t.type = OPERATOR;
 						prev = curr;
@@ -188,7 +195,7 @@ token parse(char *str){
 
 					case NUMBER:
 						buf[j] = '\0';
-						insertbuf(&number, buf, j);
+						insertbuf(&number, buf, j, 0);
 						j = 0;
 						t.type = NUMBER;
 						t.data.number = number;
@@ -210,6 +217,52 @@ token parse(char *str){
 						break;
 				}
 				break;
+			case '.':
+				curr = FRAC;
+				switch(prev){
+					case START: case SPACE:
+						initnum(&number);
+						number.point = 0;
+						j = 0;
+						i++;
+						prev = curr;
+						break;
+
+					case NUMBER:
+						buf[j] = '\0';
+						insertbuf(&number, buf, j, 1);
+						j = 0;
+						i++;
+						prev = curr;
+						break;
+						
+					case OPERATOR:
+						initnum(&number);
+						number.point = 0;
+						j = 0;
+						i++;
+						prev = curr;
+						t.data.op = op;
+						t.type = OPERATOR;
+						return t;
+						break;
+
+					case ERR:
+						t.type = ERR;
+						prev = curr;
+						i++;
+						return t;
+						break;
+
+					default:
+						prev = ERR;
+						i++;
+						t.type = ERR;
+						break;
+
+				}
+				break;
+
 			default:
 				prev = ERR;
 				t.type = ERR;
@@ -222,8 +275,8 @@ token parse(char *str){
 }
 
 
-void insertbuf(num *one, char *buf, int j){
-	int offset = j % DIG_LEN, x = 0;
+void insertbuf(num *one, char *buf, int j, int frac){
+	int offset = j % DIG_LEN, x = 0, count = 0;
 	offset = (offset == 0) ? DIG_LEN : offset;
 	char ch;
 	while(offset <= j){
@@ -233,7 +286,12 @@ void insertbuf(num *one, char *buf, int j){
 		buf[offset] = ch;
 		x = offset;
 		offset += DIG_LEN;
+		count++;
 	}
+	if(frac == 1){ //this number of digit are before fraction
+		one->point = count;
+	}
+
 	return;
 }
 

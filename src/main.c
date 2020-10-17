@@ -32,7 +32,7 @@ int main(){
 	int j = 0;
 
 	while(1){
-		t = parse("  	-123 * -123");
+		t = parse(".12333 * 1111.1111");
 		if(t.type == NUMBER){
 			if(j == 0){
 				one = t.data.number;
@@ -49,12 +49,17 @@ int main(){
 		//	printf("%c\n", t.data.op);
 	}
 
+	printf("count is %d %d\n", one.point, two.point);
+	printnum(one);
+
 	//result = multiply(one, two);
+	/*
 	result = add(one, two);
 
 	printnum(one);
 	printnum(two);
 	printnum(result);
+	*/
 
 }
 

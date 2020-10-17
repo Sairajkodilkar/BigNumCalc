@@ -95,14 +95,19 @@ int isgreater(num one, num two){
  * postcondition:
  * 		prints the number on stdout
  */
-void __printnum(node *start, int sign){
+void __printnum(node *start, int sign, int count){
 	if(start == NULL){
+		if(count == 0)
+			printf(".");
 		if(sign == -1)
 			printf("-");
 		return;
 	}
-	__printnum(start->next, sign);
+	__printnum(start->next, sign, count - 1);
 	printf("%d", start->digit);
+	if(count == 0){
+		printf(".");
+	}
 	return;
 }
 
@@ -121,7 +126,7 @@ void printnum(num one){
 		printf("0\n");
 		return;
 	}
-	__printnum(one.part, one.sign);
+	__printnum(one.part, one.sign, one.count - one.point);
 	printf("\n");
 }
 
@@ -160,8 +165,8 @@ void erasenum(num *one){
  */
 void initnum(num *one){
 	one->part = NULL;
-	one->point = 0;
-	one->count = 0;
+	one->point = -1;//indicating it is not float, 0 meaning frac at start 
+	one->count = 0; 
 	one->sign = 1;
 	return;
 }
@@ -285,6 +290,7 @@ num __multiply(node *one, node *two){
 	num result;
 	initnum(&result);
 	int dig = (one != NULL) ? one->digit : 0, dig2;
+	int p1, p2;
 	long r, carry = 0;
 
 	while(temp != NULL || carry != 0){
@@ -300,6 +306,8 @@ num __multiply(node *one, node *two){
 		insert_digit(&result, (int)r);
 	}
 	reverse(&result);
+	p1 = (one->count - one->point); 
+	p2 = (two->count - two->point);
 	return result;
 }
 
@@ -341,6 +349,7 @@ num multiply(num one, num two){
 		i++;
 	}
 	prev.sign = one.sign * two.sign;
+	result.point = result.count - (p1 > 0 ? p1 : 0 + p2 > 0 ? p2 : 0);
 	return prev;
 }
 
@@ -385,16 +394,6 @@ num multiply(num one, num two){
 
    }
    */
-
-
-
-
-
-
-
-
-
-
 
 
 
