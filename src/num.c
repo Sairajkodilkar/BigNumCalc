@@ -192,8 +192,43 @@ num add(num one, num two){
 		return sub(one, two); //one - two
 	}
 
+	int frac1, frac2, diff, max = 0;
 	num result;
 	initnum(&result);
+	
+	/* In case fraction is not equal */
+
+	if(one.point != -1){
+		frac1 = (one.count - one.point);
+		max = frac1;
+	}
+	else
+		frac1 = 0;
+	if(two.point != -1){
+		frac2 = (two.count - two.point);
+		max = frac2;
+	}
+	else
+		frac2 = 0;
+	diff = frac1 - frac2;
+	if(diff > 0){
+		max = frac1;
+		while(diff){
+			insert_digit(&result, one.part->digit); 
+			one.part = one.part->next;
+			diff--;
+		}
+	}
+	else if(diff < 0){
+		max = frac2;
+		diff = -diff;
+		while(diff){
+			insert_digit(&result, two.part->digit); 
+			two.part = two.part->next;
+			diff--;
+		}
+	}
+
 	node *x = one.part, *y = two.part;
 	int x_d, y_d, r, carry;
 	carry = 0;
@@ -215,6 +250,9 @@ num add(num one, num two){
 
 	if(one.sign == -1 && two.sign == -1){
 		result.sign = -1;
+	}
+	if(max){
+		result.point = result.count - max;
 	}
 
 	return result;
@@ -290,7 +328,6 @@ num __multiply(node *one, node *two){
 	num result;
 	initnum(&result);
 	int dig = (one != NULL) ? one->digit : 0, dig2;
-	int p1, p2;
 	long r, carry = 0;
 
 	while(temp != NULL || carry != 0){
@@ -306,8 +343,6 @@ num __multiply(node *one, node *two){
 		insert_digit(&result, (int)r);
 	}
 	reverse(&result);
-	p1 = (one->count - one->point); 
-	p2 = (two->count - two->point);
 	return result;
 }
 
@@ -349,7 +384,6 @@ num multiply(num one, num two){
 		i++;
 	}
 	prev.sign = one.sign * two.sign;
-	result.point = result.count - (p1 > 0 ? p1 : 0 + p2 > 0 ? p2 : 0);
 	return prev;
 }
 
