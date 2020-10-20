@@ -276,9 +276,13 @@ token parse(char *str){
 
 
 void insertbuf(num *one, char *buf, int j, int frac){
-	int offset = j % DIG_LEN, x = 0, count = 0, n;
-	offset = (offset == 0) ? DIG_LEN : offset;
+	int offset = j % DIG_LEN, x = 0, count = 0, n, flag = 0;
+	offset = (offset == 0 || one->point != -1) ? DIG_LEN : offset;
 	char ch;
+	if(offset > j && one->point != -1){ //point != -1 handles the fraction  condition
+		offset = j;
+		flag = 1;
+	}
 	while(offset <= j){
 		ch = buf[offset];
 		buf[offset] = '\0';
@@ -289,16 +293,20 @@ void insertbuf(num *one, char *buf, int j, int frac){
 			n = n / 10;
 		}
 		insert_digit(one, n);
+		count++;
 		buf[offset] = ch;
 		x = offset;
 		offset += DIG_LEN;
-		count++;
+		if(flag)
+			break;
+		if(offset > j && one->point != -1){
+			offset = j;
+			flag = 1;
+		}
 	}
 	if(frac == 1){ //this number of digit are before fraction
 		one->point = count;
 	}
-	else
-		printf("%d\n", offset);
 
 	return;
 }

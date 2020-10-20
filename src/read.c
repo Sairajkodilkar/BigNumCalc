@@ -13,7 +13,7 @@
 int readline(char *buf, int n){
 	int i = 0;
 	char c;
-	while((((c = getchar()) != '\n') || c != EOF) && i < n - 1){
+	while(((c = getchar()) != '\n') && c != EOF && i < n - 1){
 		buf[i++] = c;
 	}
 	buf[i] = '\0';

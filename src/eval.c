@@ -26,11 +26,9 @@ num eval(char *str){
 		t = parse(str);
 		switch(t.type){
 			case OPERATOR:
-				printf("operator %c\n", t.data.op);
 				prevpre = currpre;
 				switch(t.data.op){
 					case '+': case '-':
-						//printf("inside\n");
 						currpre = ADDSUB + bracket;
 						break;
 					case '*': case '/':
@@ -51,7 +49,6 @@ num eval(char *str){
 						return error;
 				}
 				if(currpre <= prevpre){
-					//printf("inside checker \n");
 					while(!cisempty(&operators)){
 						op = cpop(&operators);
 
@@ -64,7 +61,6 @@ num eval(char *str){
 
 						switch(op){
 							case '+':
-								//printf("add\n");
 								result = add(one, two);
 								break;
 							case '-':
@@ -95,12 +91,10 @@ num eval(char *str){
 						npush(&numbers, result);
 					}
 				}
-				//printf("pushed operator\n");
 				cpush(&operators, t.data.op);
 				break;
 
 			case NUMBER:
-				//printf("number pushed\n");
 				if(nisfull(&numbers)){
 					cleannstack(&numbers);
 					return error;
@@ -111,7 +105,6 @@ num eval(char *str){
 			case END:
 				while(!cisempty(&operators)){
 					op = cpop(&operators);
-					//printf("operator is%d\n", op);
 
 					if(nisempty(&numbers))
 						return error;
@@ -148,7 +141,6 @@ num eval(char *str){
 					npush(&numbers, result);
 				}
 				if(nisempty(&numbers) || bracket != 0){
-					printf("error\n");
 					return error;
 				}
 				result = npop(&numbers);
@@ -175,6 +167,7 @@ void cleannstack(nstack *numbers){
 	}
 	return;
 }
+
 
 
 

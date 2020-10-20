@@ -56,16 +56,39 @@ void reverse(num *one){
  * 		else 0 is returned
  */
 int __isgreater(node *one, node *two){
+	int x;
 	if(one == NULL && two != NULL)
 		return 0;
+	
 	else if(one != NULL && two == NULL)
 		return 1;
-	else if(one == NULL && two == NULL)
-		return 0;
-	if(__isgreater(one->next, two->next))
+	
+	else if(one->next == NULL && two->next == NULL){
+		if(one->digit > two->digit){
 			return 1;
-	else
-		return one->digit > two->digit;
+		}
+		else if(one->digit == two->digit){
+			return 2;
+		}
+		else{ 
+			return 0;
+		}
+	}
+
+	x = __isgreater(one->next, two->next);
+	/* if most significant are equal then compare current */
+	if(x == 2){
+		if(one->digit > two->digit){
+			return 1;
+		}
+		else if(one->digit == two->digit){
+			return 2;
+		}
+		else{
+			return 0;
+		}
+	}
+	return x;
 }
 
 
@@ -80,7 +103,20 @@ int __isgreater(node *one, node *two){
  * 		else 0
  */
 int isgreater(num one, num two){
-	return __isgreater(one.part, two.part);
+	int x;
+	x = __isgreater(one.part, two.part);
+	if(x != 1)
+		return 0;
+	return 1;
+}
+
+int len(int x){
+	int i = 0;
+	while(x){
+		i++;
+		x = x / 10;
+	}
+	return i;
 }
 
 
@@ -96,6 +132,7 @@ int isgreater(num one, num two){
  * 		prints the number on stdout
  */
 void __printnum(node *start, int sign, int count){
+	int x;
 	if(start == NULL){
 		if(count == 0)
 			printf(".");
@@ -104,6 +141,13 @@ void __printnum(node *start, int sign, int count){
 		return;
 	}
 	__printnum(start->next, sign, count - 1);
+	x = len(start->digit);
+	if(x < 8){
+		x = 8 - x;
+		while(x--)
+			printf("0");
+	}
+
 	printf("%d", start->digit);
 	if(count == 0){
 		printf(".");
@@ -195,8 +239,8 @@ num add(num one, num two){
 	int frac1, frac2, diff, max = 0;
 	num result;
 	initnum(&result);
-	
-	/* In case fraction is not equal */
+
+	/* In case number of digits after fraction is not equal */
 
 	if(one.point != -1){
 		frac1 = (one.count - one.point);
@@ -279,8 +323,36 @@ num sub(num one, num two){
 	}
 
 	num result;
+	int diff, frac1, frac2, tem, max = 0;
 	node *x , *y;
 	initnum(&result);
+
+	if(one.point != -1){
+		frac1 = (one.count - one.point);
+	}
+	else
+		frac1 = 0;
+	if(two.point != -1){
+		frac2 = (two.count - two.point);
+	}
+	else
+		frac2 = 0;
+
+	tem = diff = frac1 - frac2;
+	if(diff > 0){
+		max = frac1;
+		while(diff){
+			insert_digit(&two, 0);
+			diff--;
+		}	
+	}
+	else if(diff < 0){
+		max = frac1;
+		while(diff){
+			insert_digit(&one, 0);
+		}
+	}
+
 	if(isgreater(two, one)){
 		x = two.part;
 		y = one.part;
@@ -290,6 +362,7 @@ num sub(num one, num two){
 		x = one.part;
 		y = two.part;
 	}
+
 	int x_d, y_d, r, borrow = 0;
 	while(x != NULL || y != NULL){
 		x_d = (x == NULL)?0:x->digit;
@@ -307,6 +380,28 @@ num sub(num one, num two){
 		x = (x == NULL)?x:x->next;
 		y = (y == NULL)?y:y->next;
 	}
+
+	/* To prevent memory leak */
+	if(tem > 0){
+		while(tem){
+			free(two.part);
+			(two.part) = (two.part)->next;
+			two.count--;
+			tem--;
+		}
+	}
+	else if(tem < 0){
+		while(tem){
+			free(one.part);
+			one.part = one.part->next;
+			one.count--;
+			tem--;
+		}
+	}
+	if(max){
+		result.point = result.count - max;
+	}
+
 	reverse(&result);
 	return result;
 }
@@ -358,6 +453,7 @@ num __multiply(node *one, node *two){
  */
 num multiply(num one, num two){
 	num result, prev, garbage;
+	int frac1, frac2;
 	int i, j;
 	i = j = 0;
 	initnum(&result);
@@ -366,6 +462,7 @@ num multiply(num one, num two){
 	node *temp;
 	temp = one.part;
 	while(temp != NULL){
+		j = 0;
 		garbage = prev;
 		result = __multiply(temp, two.part);
 		while(j < i){
@@ -383,6 +480,14 @@ num multiply(num one, num two){
 		temp = temp->next;
 		i++;
 	}
+	/* fraction point just get adds up in multiplication */
+	frac1 = one.point == -1 ? 0 : (one.count - one.point);
+	frac2 = two.point == -1 ? 0 : (two.count - two.point);
+	i = frac1 + frac2;
+	if(i != 0){
+		prev.point = prev.count - i;
+	}
+
 	prev.sign = one.sign * two.sign;
 	return prev;
 }

@@ -1,12 +1,16 @@
 #include <stdio.h>
 #include "eval.h"
+#include "read.h"
 
 /* currently operate on int */
 
-/*
+
 int main(){
-	num result;
-	result = eval("111111111 - 222222222 * 2");
+	num result; 
+	char buf[1000];
+	int i;
+	i = readline(buf, 1000);
+	result = eval(buf);
 	if(result.sign == 2){
 		printf("bad expr\n");
 		return 1;
@@ -14,7 +18,6 @@ int main(){
 	printnum(result);
 	erasenum(&result);
 }
-*/
 
 
 
@@ -23,6 +26,8 @@ int main(){
 
 
 
+
+/*
 int main(){
 	token t;
 	num one, two, result;
@@ -32,7 +37,9 @@ int main(){
 	int j = 0;
 
 	while(1){
-		t = parse("111111111.1111111 * 1111.1111");
+		t = parse("111122221123746019324713204978103297411.1112341234132412342134111111111 - 1111112.34123412341234123413241234111");
+		//t = parse("1111111111111 * 1111111111111");
+		//t = parse("123456.78912312345 * 122.347");
 		if(t.type == NUMBER){
 			if(j == 0){
 				one = t.data.number;
@@ -54,10 +61,13 @@ int main(){
 
 	//result = multiply(one, two);
 	
-	result = add(one, two);
+	//printf("%d\n", isgreater(one, two));
+	
+	result = sub(one, two);
 	printnum(one);
 	printnum(two);
 	printnum(result);
+	
 
 }
-
+*/
