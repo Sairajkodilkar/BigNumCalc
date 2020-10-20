@@ -468,7 +468,6 @@ num multiply(num one, num two){
 			insert_digit(&result, 0);
 			j++;
 		}
-		printf("multiplying\n");
 		prev = add(result, prev);
 
 		/* to prevent memory leak */

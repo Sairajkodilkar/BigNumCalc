@@ -94,7 +94,6 @@ num eval(char *str){
 				break;
 
 			case NUMBER:
-				printnum(t.data.number);
 				if(nisfull(&numbers)){
 					cleannstack(&numbers);
 					return error;

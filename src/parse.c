@@ -17,8 +17,13 @@ token parse(char *str){
 	static char *buf = NULL ;
 	int curr, size = 1024;
 	static num number;
-	if(i == 0)
+	if(i == 0){ /* starting of new loop */
+		prev = START;
+		j = 0;
+		op_flag = 2;
+		buf = NULL;
 		buf = (char *)malloc(sizeof(char) * size);
+	}
 	token t;
 
 	if(prev == END){
@@ -177,12 +182,9 @@ token parse(char *str){
 				curr = END;
 				switch(prev){
 					case START: case SPACE:
-						i = 0;
-						free(buf);
 						t.type = END;
 						prev = curr;
 						i++;
-						return t;
 						break;
 
 					case OPERATOR:
@@ -299,7 +301,7 @@ void insertbuf(num *one, char *buf, int j, int frac){
 		offset += DIG_LEN;
 		if(flag)
 			break;
-		if(offset > j && one->point != -1){
+		if(offset >= j && one->point != -1){
 			offset = j;
 			flag = 1;
 		}
