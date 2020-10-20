@@ -16,7 +16,7 @@ token parse(char *str){
 	static char op;
 	static char *buf = NULL ;
 	int curr, size = 1024;
-	num number;
+	static num number;
 	if(i == 0)
 		buf = (char *)malloc(sizeof(char) * size);
 	token t;
@@ -287,7 +287,7 @@ void insertbuf(num *one, char *buf, int j, int frac){
 		ch = buf[offset];
 		buf[offset] = '\0';
 		n = atoi(buf + x);
-		if(offset == j && one->point != -1){
+		if(offset == j && one->point != -1 && n != 0){
 			while(n < (MAX_DIG + 1))
 				n = n * 10;
 			n = n / 10;
@@ -313,27 +313,4 @@ void insertbuf(num *one, char *buf, int j, int frac){
 
 
 
-
-
-
-/*
-   void insertbuf(num *one, char *buf, int j){
-   int offset = j - DIG_LEN;
-   int n;
-   while(1){
-   if(offset <= 0){
-   offset = 0;
-   n = atoi(&buf[offset]);
-   insert_digit(one, atoi(&buf[offset]));
-   break;
-   }
-   n = atoi(&buf[offset]);
-   insert_digit(one, n);
-   buf[offset] = '\0';
-   offset -= DIG_LEN;
-   }
-   reverse(one);
-   return;
-   }
-   */
 

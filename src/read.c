@@ -1,21 +1,29 @@
 #include "read.h"
 
-/* int readline(char *buf, int n)
+/* int readline(char **buf, int *n)
  * use:
- * 		read the line in given char array buf of size n
+ * 		read the line in given char array buf by dynamically allocation memory
  * precondition:
- * 		buf: character array
- * 		n: max size of array
+ * 		buf: pointer to the character pointer
+ * 		n: int pointer 
  * postcondition:
  * 		reads the line from stdin into buf and terminate it with nul char
- * 		if input is greater than size of buf then n - 1 chars read and terminated by nul
+ * 		the total allocated size is stored in n
  */
-int readline(char *buf, int n){
+int readline(char **buf, int *n){
+	static int size = 2000;
+	(*buf) = (char *)malloc(sizeof(char) * size);
 	int i = 0;
 	char c;
-	while(((c = getchar()) != '\n') && c != EOF && i < n - 1){
-		buf[i++] = c;
+	while((c = getchar()) != '\n' && c != EOF){
+		if(i >= size){
+			size = size + 2000;
+			*buf = realloc(*buf, size);
+		}
+		(*buf)[i++] = c;
 	}
-	buf[i] = '\0';
+	*n = size;
+	(*buf)[i] = '\0';
+	size = 2000; //line is complete so reset the size
 	return i;
 }

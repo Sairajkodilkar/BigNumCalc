@@ -3,13 +3,13 @@
 enum precedence {LOW, ADDSUB, MULDIV, MODULO, BRACKET};
 
 void cleannstack(nstack *);
-
+/* TODO division operation is pending */
 num eval(char *str){
 	nstack numbers;
 	cstack operators;
 
 	token t;
-	num result, one, two, error, warning;
+	num result, one, two, error;
 
 	int currpre = LOW, prevpre, bracket = 0;
 	char op;
@@ -20,7 +20,6 @@ num eval(char *str){
 	initcstack(&operators);
 
 	error.sign = 2;
-	warning.sign = 3;
 
 	while(1){
 		t = parse(str);
@@ -95,6 +94,7 @@ num eval(char *str){
 				break;
 
 			case NUMBER:
+				printnum(t.data.number);
 				if(nisfull(&numbers)){
 					cleannstack(&numbers);
 					return error;
@@ -103,6 +103,8 @@ num eval(char *str){
 				break;
 
 			case END:
+				if(cisempty(&operators) || bracket != 0)
+					return error;
 				while(!cisempty(&operators)){
 					op = cpop(&operators);
 
@@ -167,10 +169,6 @@ void cleannstack(nstack *numbers){
 	}
 	return;
 }
-
-
-
-
 
 
 

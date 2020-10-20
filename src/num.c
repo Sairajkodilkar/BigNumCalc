@@ -339,15 +339,14 @@ num sub(num one, num two){
 		frac2 = 0;
 
 	tem = diff = frac1 - frac2;
+	max = frac1 > frac2 ? frac1 : frac2;
 	if(diff > 0){
-		max = frac1;
 		while(diff){
 			insert_digit(&two, 0);
 			diff--;
 		}	
 	}
 	else if(diff < 0){
-		max = frac1;
 		while(diff){
 			insert_digit(&one, 0);
 		}
@@ -469,6 +468,7 @@ num multiply(num one, num two){
 			insert_digit(&result, 0);
 			j++;
 		}
+		printf("multiplying\n");
 		prev = add(result, prev);
 
 		/* to prevent memory leak */
@@ -491,49 +491,4 @@ num multiply(num one, num two){
 	prev.sign = one.sign * two.sign;
 	return prev;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*returns carry*/
-/*
-   int _add(node *part1, node *part2, num *result){
-   int x, y, carry;
-   if(part1 == NULL && part2 == NULL){
-   return 0;
-   }
-   x = part1 == NULL?0:part1;
-   y = part2 == NULL?0:part2;
-   carry = _add(part1->next?part1->next:NULL, part1->next?part1->next:NULL, result);
-   digit = x + y + carry;
-   insert_front(result, digit % MAXDIGIT);
-   return digit % MAX_DIG;
-
-   }
-   */
-
-
-
 
