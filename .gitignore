@@ -3,4 +3,5 @@ calc
 gdbcmd1*
 *.gch
 *.temp
+temp/
 
