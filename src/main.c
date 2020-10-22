@@ -2,7 +2,6 @@
 #include "eval.h"
 #include "read.h"
 
-/* currently operate on int */
 
 
 int main(){

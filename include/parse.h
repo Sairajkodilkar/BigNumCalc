@@ -7,7 +7,7 @@
 #include <string.h>
 #include "num.h"
 
-enum states {START, OPERATOR, NUMBER, FRAC, SPACE, END, ERR};
+enum states {START, OPERATOR, NUMBER, FRAC, SPACE, VAR, END, ERR};
 
 typedef struct token{
 	int type;
