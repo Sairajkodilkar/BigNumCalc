@@ -1,6 +1,6 @@
 #include "eval.h"
 
-enum precedence {LOW, ADDSUB, MULDIV, MODULO, BRACKET};
+enum precedence {LOW, EQUAL, ADDSUB, MULDIV, MODULO, BRACKET};
 
 void cleannstack(nstack *);
 /* TODO division operation is pending */
@@ -11,7 +11,10 @@ num eval(char *str){
 	token t;
 	num result, one, two, error;
 
-	int currpre = LOW, prevpre, bracket = 0;
+	static num memory[26];
+	static int storage;
+
+	int currpre = LOW, prevpre, bracket = 0; 
 	char op;
 
 	initnum(&one);
@@ -35,6 +38,10 @@ num eval(char *str){
 						break;
 					case '%':
 						currpre = MODULO + bracket;
+						break;
+					case '=':
+						ipush(&address, storage); //if equal to is encountered storage is pushed on address stack
+						currpre = EQUAL + bracket;
 						break;
 					case '(':
 						bracket += BRACKET;
@@ -74,6 +81,10 @@ num eval(char *str){
 							case '%':
 								//result = modulo(one, two);
 								break;
+							case "=":
+								storage = ipop(&address);
+								copy(two, memory + storage);
+								break;
 							default:
 								return error;
 								break;
@@ -101,8 +112,17 @@ num eval(char *str){
 				npush(&numbers, t.data.number);
 				break;
 
+			case VAR:
+				/*
+				 * push var on num stack
+				 */
+				storage = t.data.op - 'a';
+				copy(memory[storage], &one);
+				npush(&numbers, one);
+				break;
+
 			case END:
-				if(cisempty(&operators) || bracket != 0)
+				if(bracket != 0)
 					return error;
 				while(!cisempty(&operators)){
 					op = cpop(&operators);
@@ -129,6 +149,10 @@ num eval(char *str){
 							break;
 						case '%':
 							//result = modulo(one, two);
+							break;
+						case "=":
+							storage = pop(&address);
+							copy(two, memory + storage);
 							break;
 						default:
 							return error;

@@ -115,6 +115,7 @@ token parse(char *str){
 							op_flag = 0;
 							continue;
 						}
+						op_flag = 0; //TODO in master branch
 						t.type = OPERATOR;
 						t.data.op = op; 
 						return t;
@@ -293,7 +294,7 @@ token parse(char *str){
 						j = 0;
 						i++;
 						prev = curr;
-						t.data.op = op;
+						t.data.op = var;
 						t.type = VAR;
 						return t;
 						break;
