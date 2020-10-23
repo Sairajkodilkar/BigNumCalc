@@ -45,6 +45,7 @@ num eval(char *str){
 						break;
 					case '(':
 						bracket += BRACKET;
+						cpush(&operators, t.data.op);
 						continue;
 						break;
 					case ')':
@@ -57,7 +58,9 @@ num eval(char *str){
 				if(currpre <= prevpre){
 					while(!cisempty(&operators)){
 						op = cpop(&operators);
-
+						if(op == '('){
+							break;
+						}
 						if(nisempty(&numbers))
 							return error;
 						two = npop(&numbers);
@@ -126,7 +129,9 @@ num eval(char *str){
 					return error;
 				while(!cisempty(&operators)){
 					op = cpop(&operators);
-
+					if(op == '('){
+						break;
+					}
 					if(nisempty(&numbers))
 						return error;
 					two = npop(&numbers);
