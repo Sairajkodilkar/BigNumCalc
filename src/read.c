@@ -12,9 +12,12 @@
  */
 int readline(char **buf, int *n){
 	static int size = 2000;
+	static int eofflag = 0;
 	(*buf) = (char *)malloc(sizeof(char) * size);
 	int i = 0;
 	char c;
+	if(eofflag)
+		return EOF;
 	while((c = getchar()) != '\n' && c != EOF){
 		if(i >= size){
 			size = size + 2000;
@@ -22,6 +25,8 @@ int readline(char **buf, int *n){
 		}
 		(*buf)[i++] = c;
 	}
+	if(c == EOF)
+		eofflag = 1;
 	*n = size;
 	(*buf)[i] = '\0';
 	size = 2000; //line is complete so reset the size

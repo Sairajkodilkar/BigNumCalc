@@ -40,7 +40,7 @@ num eval(char *str){
 	cstack address; //stack containing memory addresses where result must be store
 
 	static num memory[26] = { 0 }; //memory addresses to store a-z variables
-	static int storage;
+	int storage = -1;
 
 	token t;
 	num result, one, two, error, noprint;
@@ -65,8 +65,15 @@ num eval(char *str){
 				prevpre = currpre;
 				currpre = getprece(t.data.op);
 				if(currpre == EQUAL){
+					if(storage < 0){
+						cleannstack(&numbers);
+						cleancstack(&operators);
+						cleancstack(&address);
+						return error;
+					}
 					cpush(&address, (char)storage);
 					cpush(&operators, t.data.op);
+					storage = -1;
 					break;
 				}
 				if(currpre == BRACKET && t.data.op == '('){
@@ -92,12 +99,21 @@ num eval(char *str){
 							case '%':
 								break;
 							case '=':
+								if(cisempty(&address)){
+									cleannstack(&numbers);
+									cleancstack(&operators);
+									cleancstack(&address);
+									return error;
+								}
 								storage = (int)cpop(&address);
 								copy(two, memory + storage);
+								copy(two, &result);
 								printflag = 0;
 								break;
 							default:
 								cleannstack(&numbers);
+								cleancstack(&operators);
+								cleancstack(&address);
 								return error;
 								break;
 						}
@@ -129,6 +145,8 @@ num eval(char *str){
 							break;
 						default:
 							cleannstack(&numbers);
+							cleancstack(&operators);
+							cleancstack(&address);
 							return error;
 							break;
 					}
@@ -149,7 +167,6 @@ num eval(char *str){
 				break;
 
 			case END:
-				printf("bad\n");
 				while(!cisempty(&operators)){
 					two = npop(&numbers);
 					one = npop(&numbers);
@@ -169,12 +186,21 @@ num eval(char *str){
 						case '%':
 							break;
 						case '=':
+							if(cisempty(&address)){
+								cleannstack(&numbers);
+								cleancstack(&operators);
+								cleancstack(&address);
+								return error;
+							}
 							storage = (int)cpop(&address);
 							copy(two, memory + storage);
+							copy(two, &result);
 							printflag = 0;
 							break;
 						default:
 							cleannstack(&numbers);
+							cleancstack(&operators);
+							cleancstack(&address);
 							return error;
 							break;
 					}
@@ -200,12 +226,15 @@ num eval(char *str){
 
 			case ERR:
 				cleannstack(&numbers);
+				cleancstack(&operators);
+				cleancstack(&address);
 				return error;
 				break;
 
-
 			default:
 				cleannstack(&numbers);
+				cleancstack(&operators);
+				cleancstack(&address);
 				return error;
 				break;
 

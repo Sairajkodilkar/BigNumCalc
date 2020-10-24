@@ -38,7 +38,6 @@ token parse(char *str){
 		switch(str[i]){
 			case ' ': case '\t': case '\f': case '\v':
 				curr = SPACE;
-				printf("space\n");
 				switch(prev){
 					case SPACE: case START:
 						i++;
@@ -46,7 +45,6 @@ token parse(char *str){
 						break;
 
 					case OPERATOR:
-						printf("operator\n");
 						t.type = OPERATOR;
 						t.data.op = op;
 						prev = curr;
@@ -162,7 +160,6 @@ token parse(char *str){
 			case '(': case ')': case '=':
 				curr = OPERATOR;
 				op_flag += 1;
-				printf("op %c\n", str[i]);
 				switch(prev){
 					case START: case SPACE:
 						op = str[i++];
@@ -324,7 +321,6 @@ token parse(char *str){
 			case 'p': case 'q': case 'r': case 's': case 't':
 			case 'u': case 'v': case 'w': case 'x': case 'y':
 			case 'z':
-				printf("encountered %c\n", str[i]);
 				curr = VAR;
 				switch(prev){
 					case START: case SPACE:
