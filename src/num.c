@@ -1,4 +1,21 @@
 #include "num.h"
+
+/* void initnum(num *one)
+ * use:
+ * 		initialise the number;
+ * 		user should call it before using the new number
+ * precondition:
+ * 		one: pointer to the num
+ * postconditon:
+ * 		number is initialised with sign 1
+ */
+void initnum(num *one){
+	one->part = NULL;
+	one->point = -1;//indicating it is not float, 0 meaning frac at start 
+	one->count = 0; 
+	one->sign = 1;
+	return;
+}
 /* void insert_digit(num *one, int dig)
  * use:
  * 		inserts digit in reverse order
@@ -17,8 +34,22 @@ void insert_digit(num *one, int dig){
 	one->part->digit = dig;
 }
 
+/* create a copy of given number*/
+void __copy(num *number, node *part){
+	if(part == NULL)
+		return;
+	__copy(number, part->next);
+	insert_digit(number, part->digit);
+	return;
+}
 
-
+void copy(num one, num *number){
+	initnum(number);
+	__copy(number, one.part);
+	number->point = one.point;
+	number->count = one.count;
+	number->sign = one.sign;
+}
 
 /* void reverse(num *one){
  * use:
@@ -42,7 +73,6 @@ void reverse(num *one){
 	}
 	one->part->next = temp;
 }
-
 
 
 /* int __isgreater(node *one, node *two)
@@ -197,23 +227,6 @@ void erasenum(num *one){
 	return;
 }
 
-
-/* void initnum(num *one)
- * use:
- * 		initialise the number;
- * 		user should call it before using the new number
- * precondition:
- * 		one: pointer to the num
- * postconditon:
- * 		number is initialised with sign 1
- */
-void initnum(num *one){
-	one->part = NULL;
-	one->point = -1;//indicating it is not float, 0 meaning frac at start 
-	one->count = 0; 
-	one->sign = 1;
-	return;
-}
 
 
 /* num add(num one, num two)

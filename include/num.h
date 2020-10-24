@@ -36,6 +36,7 @@ void insert_digit(num *one, int dig);
 void printnum(num one);
 void erasenum(num *one);
 void reverse(num *one);
+void copy(num source, num *dest);
 int isgreater(num one, num two);
 num add(num one, num two);
 num sub(num one, num two);
