@@ -149,6 +149,7 @@ num eval(char *str){
 				break;
 
 			case END:
+				printf("bad\n");
 				while(!cisempty(&operators)){
 					two = npop(&numbers);
 					one = npop(&numbers);
