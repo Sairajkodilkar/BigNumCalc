@@ -4,7 +4,6 @@
 
 
 
-/*
 int main(){
 	num result; 
 	int size;
@@ -20,6 +19,10 @@ int main(){
 
 		if(result.sign == 2){
 			printf("BAD EXPRESSION\n");
+			continue;
+		}
+		else if(result.sign == 3){
+			continue;
 		}
 		else{
 			printnum(result);
@@ -28,9 +31,9 @@ int main(){
 		free(buf);
 	}
 }
-*/
 
 
+/*
 int main(){
 	token t;
 	num one, two, result;
@@ -78,3 +81,4 @@ int main(){
 	
 
 }
+*/
