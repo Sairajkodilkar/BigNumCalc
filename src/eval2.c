@@ -15,8 +15,15 @@ int getprece(char ch){
 	return LOW;
 }
 
+void cleannstack(nstack *numbers){
+	num one;
+	while(!nisempty(numbers)){
+		one = npop(numbers);
+		erasenum(&one);
+	}
+	return;
+}
 
-void cleannstack(nstack *);
 /* todo division operation is pending */
 num eval(char *str){
 	nstack numbers;
@@ -43,13 +50,10 @@ num eval(char *str){
 				currpre = getprece(t.data.op);
 				if(currpre == BRACKET && t.data.op == '('){
 					cpush(&operators, t.data.op);
-					//printf("pushed char %c\n", t.data.op);
 					break;
 				}
 				else if(currpre == BRACKET && t.data.op == ')'){
-					//printf("rbracket %c\n", t.data.op);
 					while((op = cpop(&operators)) != '('){
-						//printf("%c\n",op);
 						two = npop(&numbers);
 						one = npop(&numbers);
 						switch(op){
@@ -67,7 +71,6 @@ num eval(char *str){
 							case '%':
 								break;
 							default:
-								//printf("rbracket default %d\n", op);
 								cleannstack(&numbers);
 								return error;
 								break;
@@ -78,14 +81,12 @@ num eval(char *str){
 						initnum(&one);
 						npush(&numbers, result);
 					}
-					//printf("%c\n", op);
 					break;
 				}
 				else if(currpre < prevpre){
 					two = npop(&numbers);
 					one = npop(&numbers);
 					op = cpop(&operators);
-					//printf("curr vala %d\n", currpre);
 					switch(op){
 						case '+':
 							result = add(one, two);
@@ -110,12 +111,10 @@ num eval(char *str){
 					erasenum(&one);
 					initnum(&two);
 					initnum(&one);
-					//printf("pushed char %c\n", t.data.op);
 					break;
 				}
 				else{
 					cpush(&operators, t.data.op);
-					//printf("pushed char %c\n", t.data.op);
 					break;
 				}
 			case NUMBER:
@@ -127,7 +126,6 @@ num eval(char *str){
 					two = npop(&numbers);
 					one = npop(&numbers);
 					op = cpop(&operators);
-					//printf("end vala\n");
 					switch(op){
 						case '+':
 							result = add(one, two);
@@ -143,7 +141,6 @@ num eval(char *str){
 						case '%':
 							break;
 						default:
-							//printf("default\n");
 							cleannstack(&numbers);
 							return error;
 							break;
@@ -158,18 +155,12 @@ num eval(char *str){
 				break;
 
 			case ERR:
-				//printf("err\n");
 				cleannstack(&numbers);
 				return error;
 				break;
 
-				/*
-				   case VAR:
-				   break;
-				   */
 
 			default:
-				//printf("eval2\n");
 				cleannstack(&numbers);
 				return error;
 				break;
@@ -180,12 +171,4 @@ num eval(char *str){
 
 
 
-void cleannstack(nstack *numbers){
-	num one;
-	while(!nisempty(numbers)){
-		one = npop(numbers);
-		erasenum(&one);
-	}
-	return;
-}
 
