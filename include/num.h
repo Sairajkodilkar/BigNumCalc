@@ -31,6 +31,7 @@ typedef struct num{
 	int sign;
 }num;
 
+
 void initnum(num *one);
 void insert_digit(num *one, int dig);
 void printnum(num one);
