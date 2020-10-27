@@ -531,7 +531,7 @@ num divide(num one, num two){
 	insert_digit(&qu, 0);
 	prevq = qu;
 
-	while(isgreaterequal(result, one)){
+	while(isgreater(result, one)){
 		prevr = result;
 		result = sub(result, one);
 		erasenum(&prevr);
