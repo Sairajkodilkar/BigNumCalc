@@ -1,4 +1,5 @@
 #include "num.h"
+#include "unistd.h"
 
 /* void initnum(num *one)
  * use:
@@ -87,11 +88,25 @@ void reverse(num *one){
  */
 int __isgreater(node *one, node *two){
 	int x;
-	if(one == NULL && two != NULL)
+	if(one == NULL && two != NULL){
+		while(two->next != NULL && two->digit != 0){
+			two = two->next;
+		}
+		if(two->next == 0){
+			return 2;
+		}
 		return 0;
+	}
 	
-	else if(one != NULL && two == NULL)
+	else if(one != NULL && two == NULL){
+		while(one->next != NULL && one->digit != 0){
+			one = one->next;
+		}
+		if(one->next == 0){
+			return 2;
+		}
 		return 1;
+	}
 	
 	else if(one->next == NULL && two->next == NULL){
 		if(one->digit > two->digit){
@@ -134,13 +149,31 @@ int __isgreater(node *one, node *two){
  */
 int isgreater(num one, num two){
 	int x;
-	x = __isgreater(one.part, two.part);
+	if(one.sign == -1 && two.sign != -1){
+		return 0;
+	}
+	if(two.sign == -1 && one.sign == 1){
+		return 1;
+	}
+	if(one.sign == -1 && two.sign == -1)
+		x = __isgreater(two.part, one.part);
+	else if(one.sign == 1 && one.sign == 1)
+		x = __isgreater(one.part, two.part);
 	if(x != 1)
 		return 0;
 	return 1;
 }
 
+int isgreaterequal(num one, num two){
+	int x;
+	x = __isgreater(one.part, two.part);
+	if(x == 0)
+		return 0;
+	return 1;
+}
 int len(int x){
+	if(x == 0)
+		return 1;
 	int i = 0;
 	while(x){
 		i++;
@@ -435,6 +468,12 @@ num __multiply(node *one, node *two){
 	num result;
 	initnum(&result);
 	int dig = (one != NULL) ? one->digit : 0, dig2;
+
+	if(dig == 0){
+		insert_digit(&result, 0);
+		return result;
+	}
+
 	long r, carry = 0;
 
 	while(temp != NULL || carry != 0){
@@ -504,6 +543,7 @@ num multiply(num one, num two){
 	return prev;
 }
 
+
 num divide(num one, num two){
 	static num result;
 	num qu;
@@ -543,3 +583,10 @@ num divide(num one, num two){
 
 	return qu;
 }
+
+
+
+
+
+
+

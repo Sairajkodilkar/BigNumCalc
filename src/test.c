@@ -7,8 +7,11 @@ int main(){
 
 	num one;
 	initnum(&one);
-	insert_digit(&one, 100);
 
+	insert_digit(&one, 100);
+	insertnum(&table, "sairaj", one);
+	insert_digit(&one, 100);
+	printnum(one);
 	insertnum(&table, "sairaj", one);
 	printnum(search(table, "sairaj"));
 }

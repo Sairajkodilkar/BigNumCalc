@@ -15,12 +15,13 @@ int hashfuct(char *str){
 		k += str[i];
 	}
 	k = ((10 * k + 1000) % prime) % SIZE_T; //to bring somewhat randomness in k
+	printf("%d\n", k);
 	return k;
 }
 
 	
 void insertnum(hashtable *h, char *str, num one){
-	int index, flag;
+	int index, flag = 1;
 	num_node *temp;
 	index = hashfuct(str);
 
@@ -28,6 +29,7 @@ void insertnum(hashtable *h, char *str, num one){
 		temp = (*h)[index];
 
 		while(temp->next != NULL){
+			printf("noooo\n");
 			if(strcmp(temp->string, str) == 0){
 				erasenum(&(temp->one));
 				temp->one = one;
@@ -37,11 +39,14 @@ void insertnum(hashtable *h, char *str, num one){
 			temp = temp->next;
 		}
 		if(flag && strcmp(temp->string, str) == 0){
-			erasenum(&(temp->one));
+			printf("compared\n");
+			//erasenum(&(temp->one)); //makesure that only copy is inserted
 			temp->one = one;
+			printnum(temp->one);
 			flag = 0;
 		}
 		if(flag){
+			printf("flag\n");
 			temp->next = (num_node *)malloc(sizeof(num_node));
 			temp = temp->next;
 			strcpy(temp->string, str);
@@ -50,11 +55,13 @@ void insertnum(hashtable *h, char *str, num one){
 		}
 	}
 	else{
+		printf("yes\n");
 		(*h)[index] =  (num_node *)malloc(sizeof(num_node));
 		temp = (*h)[index];
 		strcpy(temp->string, str);
 		temp->one = one;
 		temp->next = NULL;
+		printf("yes\n");
 	}
 	return;
 }

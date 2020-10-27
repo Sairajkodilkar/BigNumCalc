@@ -10,14 +10,17 @@ void insertbuf(num *, char *, int, int);
  */
 token parse(char *str){
 	static int i = 0;
-	static int prev = START;
 	static int j = 0;
+	static int k = 0;
+	static int prev = START;
 	static int op_flag = 2;
 	static char op;
 	static char var;
 	static char *buf = NULL ;
-	int curr, size = 1024;
 	static num number;
+	static char identifier[20];
+	int curr, size = 1024;
+
 	if(i == 0){ /* starting of new loop */
 		prev = START;
 		j = 0;
@@ -73,7 +76,8 @@ token parse(char *str){
 
 					case VAR:
 						t.type = VAR;
-						t.data.op = var;
+						identifier[k] = '\0';
+						strcpy(t.data.var, identifier);
 						prev = curr;
 						i++;
 						return t;
@@ -138,7 +142,8 @@ token parse(char *str){
 						j = 0;
 						buf[j++] = str[i++];
 						t.type = VAR;
-						t.data.op = var;
+						identifier[k] = '\0';
+						strcpy(t.data.var, identifier);
 						prev = curr;
 						return t;
 						break;
@@ -189,7 +194,8 @@ token parse(char *str){
 					case VAR:
 						op = str[i++];
 						t.type = VAR;
-						t.data.op = var;
+						identifier[k] = '\0';
+						strcpy(t.data.var, identifier); 
 						prev = curr;
 						return t;
 						break;
@@ -238,7 +244,8 @@ token parse(char *str){
 
 					case VAR:
 						t.type = VAR;
-						t.data.op = var;
+						identifier[k] = '\0';
+						strcpy(t.data.var, identifier); 
 						prev = curr;
 						i++;
 						return t;
@@ -294,7 +301,8 @@ token parse(char *str){
 						j = 0;
 						i++;
 						prev = curr;
-						t.data.op = var;
+						identifier[k] = '\0';
+						strcpy(t.data.var, identifier);
 						t.type = VAR;
 						return t;
 						break;
@@ -321,17 +329,26 @@ token parse(char *str){
 			case 'p': case 'q': case 'r': case 's': case 't':
 			case 'u': case 'v': case 'w': case 'x': case 'y':
 			case 'z':
+			case 'A': case 'B': case 'C': case 'D': case 'E': 
+			case 'F': case 'G': case 'H': case 'I': case 'J':
+			case 'K': case 'L': case 'M': case 'N': case 'O':
+			case 'P': case 'Q': case 'R': case 'S': case 'T':
+			case 'U': case 'V': case 'W': case 'X': case 'Y':
+			case 'Z':
+			case '_':
 				curr = VAR;
 				switch(prev){
 					case START: case SPACE:
-						var = str[i++];
+						k = 0;
+						identifier[k++]= str[i++];
 						prev = curr;
 						break;
 
 					case OPERATOR:
+						k = 0;
 						t.type = OPERATOR;
 						t.data.op = op;
-						var = str[i++];
+						identifier[k++]= str[i++];
 						prev = curr;
 						return t;
 						break;
@@ -340,7 +357,8 @@ token parse(char *str){
 						buf[j] = '\0';
 						insertbuf(&number, buf, j, 0);
 						j = 0;
-						var = str[i++];
+						k = 0;
+						identifier[k++]= str[i++];
 						t.type = NUMBER;
 						t.data.number = number;
 						prev = curr;
@@ -349,18 +367,24 @@ token parse(char *str){
 
 					case ERR:
 						t.type = ERR;
-						var = str[i++];
+						k = 0;
+						identifier[k++]= str[i++];
 						prev = curr;
 						return t;
 						break;
 
-					case VAR: //currently only char variable is supported not string
-						var = str[i++];
-						prev = ERR;
+					case VAR: 
+						if(k >= 19){ 
+							i++;
+							break;
+						}
+						identifier[k++]= str[i++];
+						prev = curr;
 						i++;
 						break;
 
 					default: 
+						k = 0;
 						var = str[i++];
 						prev = ERR;
 						i++;

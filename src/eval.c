@@ -38,6 +38,7 @@ num eval(char *str){
 	nstack numbers; //stack containing the numbers
 	cstack operators; //stack containing the operators
 	cstack address; //stack containing memory addresses where result must be store
+	char identifier[20];
 
 	static num memory[26] = { 0 }; //memory addresses to store a-z variables
 	int storage = -1;
