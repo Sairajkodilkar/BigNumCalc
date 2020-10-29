@@ -58,10 +58,11 @@ num eval(char *str){
 		inithash(&symbols);
 		reinit = 1;
 	}
-	inithash(&symbols);
 
 	token t;
 	num result, one, two, error, noprint;
+	static int prevtype;
+	int currtype;
 
 	int currpre = LOW, prevpre;
 	char op;
@@ -81,11 +82,12 @@ num eval(char *str){
 		t = parse(str);
 		switch(t.type){
 			case OPERATOR:
+				currtype = OPERATOR;
 				prevpre = currpre;
 				currpre = getprece(t.data.op);
 				if(currpre == EQUAL){
 					// string_stack * , char * 
-					if(identifier[0] == '\0' || prevpre != VAR){
+					if(identifier[0] == '\0' || prevtype != VAR){
 						cleannstack(&numbers);
 						cleancstack(&operators);
 						cleanstrstack(&addresses);
@@ -94,9 +96,11 @@ num eval(char *str){
 					cpush(&operators, t.data.op);
 					strpush(&addresses, identifier);
 					identifier[0] = '\0';
+					prevtype = currtype;
 				}
-				if(currpre == BRACKET && t.data.op == '('){
+				else if(currpre == BRACKET && t.data.op == '('){
 					cpush(&operators, t.data.op);
+					prevtype = currtype;
 					break;
 				}
 				else if(currpre == BRACKET && t.data.op == ')'){
@@ -130,6 +134,7 @@ num eval(char *str){
 								copy(two, &result);
 								break;
 							default:
+								prevtype = currtype;
 								cleannstack(&numbers);
 								cleancstack(&operators);
 								cleanstrstack(&addresses);
@@ -142,6 +147,7 @@ num eval(char *str){
 						initnum(&one);
 						npush(&numbers, result);
 					}
+					prevtype = currtype;
 					break;
 				}
 				else if(currpre < prevpre){
@@ -182,11 +188,17 @@ num eval(char *str){
 					cpush(&operators, t.data.op);
 					break;
 				}
+				break;
+				prevtype = currtype;
+
 			case NUMBER:
+				currtype = NUMBER;
 				npush(&numbers, t.data.number);
+				prevtype = currtype;
 				break;
 
 			case END:
+				currtype = END;
 				while(!cisempty(&operators)){
 					two = npop(&numbers);
 					one = npop(&numbers);
@@ -208,6 +220,7 @@ num eval(char *str){
 							break;
 						case '=':
 							if(strisempty(&addresses)){
+								prevtype = currtype;
 								cleannstack(&numbers);
 								cleancstack(&operators);
 								return error;
@@ -216,10 +229,11 @@ num eval(char *str){
 							free(temp);
 							insertnum(&symbols, identifier, two); //the number is stored at that address;
 							copy(two, &result);
-							initnum(&one); //as one would be garbage
+							printflag = 0;
 							break;
 						default:
 							cleannstack(&numbers);
+							prevtype = currtype;
 							cleancstack(&operators);
 							return error;
 							break;
@@ -230,6 +244,7 @@ num eval(char *str){
 					initnum(&two);
 					initnum(&one);
 				}
+				prevtype = currtype;
 				if(printflag){
 					return npop(&numbers);
 				}
@@ -239,17 +254,21 @@ num eval(char *str){
 				break;
 
 			case VAR:
+				currtype = VAR;
 				strcpy(identifier, t.data.var);
 				one = search(symbols, identifier); //fetch the value 
 				if(one.sign == error.sign)
 					initnum(&one);
 				npush(&numbers, one); //push it on numbers
+				prevtype = currtype;
 				break;
 
 			case ERR:
+				currtype = ERR;
 				cleannstack(&numbers);
 				cleancstack(&operators);
 				cleanstrstack(&addresses);
+				prevtype = currtype;
 				return error;
 				break;
 

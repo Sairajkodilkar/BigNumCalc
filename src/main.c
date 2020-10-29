@@ -3,7 +3,6 @@
 #include "read.h"
 
 
-/*
 int main(){
 	num result; 
 	int size;
@@ -31,9 +30,8 @@ int main(){
 		free(buf);
 	}
 }
-*/
 
-
+/*
 int main(){
 	token t;
 	num one, two, result;
@@ -78,3 +76,4 @@ int main(){
 	
 
 }
+*/

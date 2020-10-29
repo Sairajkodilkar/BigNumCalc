@@ -552,7 +552,7 @@ num divide(num one, num two){
 		initnum(&result);
 		initnum(&qu);
 		qu.sign = one.sign * two.sign;
-		one.sign = two.sing = 1;
+		one.sign = two.sign = 1;
 		return qu;
 	}
 

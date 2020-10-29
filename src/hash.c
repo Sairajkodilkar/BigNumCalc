@@ -10,7 +10,7 @@ void inithash(hashtable *h){
 }
 
 int hashfuct(char *str){
-	int i = 0, k = 0, l = strlen(str), prime = 631;
+	int i = 0, k = 0, l = strlen(str);
 	for(i = 0; i < l; i++){
 		k += (int)str[i] * (i + 1); //weighted sum is considered 
 	}
