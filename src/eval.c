@@ -31,19 +31,34 @@ void cleancstack(cstack *op){
 		cpop(op);
 	}
 	return;
-}
+}  
+
+void cleanstrstack(strstack *sts){
+	char *buf;
+	while(!strisempty(sts)){
+		buf = strpop(sts);
+		free(buf);
+	}
+	return;
+}  
+
 
 /*TODO strstack is pending */
 num eval(char *str){
 	nstack numbers; //stack containing the numbers
 	cstack operators; //stack containing the operators
-	cstack address; //stack containing memory addresses where result must be store
-	char identifier[20];
-
-	static num memory[26] = { 0 }; //memory addresses to store a-z variables
-	static hashtable symbols;
+	strstack addresses;
 	char identifier[20] = "\0";
-	int storage = -1;
+	char *temp;
+
+	/* hashtable initialization */
+	static int reinit = 0;
+	static hashtable symbols;
+	if(reinit == 0){
+		inithash(&symbols);
+		reinit = 1;
+	}
+	inithash(&symbols);
 
 	token t;
 	num result, one, two, error, noprint;
@@ -54,8 +69,10 @@ num eval(char *str){
 
 	initnum(&one);
 	initnum(&two);
+
 	initnstack(&numbers);
 	initcstack(&operators);
+	initstrstack(&addresses);
 
 	error.sign = 2;
 	noprint.sign = 3;
@@ -71,10 +88,11 @@ num eval(char *str){
 					if(identifier[0] == '\0' || prevpre != VAR){
 						cleannstack(&numbers);
 						cleancstack(&operators);
+						cleanstrstack(&addresses);
 						return error;
 					}
 					cpush(&operators, t.data.op);
-					strpush(&address, identifier);
+					strpush(&addresses, identifier);
 					identifier[0] = '\0';
 				}
 				if(currpre == BRACKET && t.data.op == '('){
@@ -96,16 +114,17 @@ num eval(char *str){
 								result = multiply(one, two);
 								break;
 							case '/':
-								result = division(one, two);
+								result = divide(one, two);
 							case '%':
 								break;
 							case '=':
-								if(strisempty(&address)){
+								if(strisempty(&addresses)){
 									cleannstack(&numbers);
 									cleancstack(&operators);
 									return error;
 								}
-								strcpy(identifier, strpop(&address)); //address is fetch which is string here;
+								strcpy(identifier, temp = strpop(&addresses)); //address is fetch which is string here;
+								free(temp);
 								insertnum(&symbols, identifier, two); //the number is stored at that address;
 								initnum(&one); //as one would be garbage
 								copy(two, &result);
@@ -113,7 +132,7 @@ num eval(char *str){
 							default:
 								cleannstack(&numbers);
 								cleancstack(&operators);
-								cleancstack(&address);
+								cleanstrstack(&addresses);
 								return error;
 								break;
 						}
@@ -140,14 +159,14 @@ num eval(char *str){
 							result = multiply(one, two);
 							break;
 						case '/':
-							result = division(one, two);
+							result = divide(one, two);
 							break;
 						case '%':
 							break;
 						default:
 							cleannstack(&numbers);
 							cleancstack(&operators);
-							cleancstack(&address);
+							cleanstrstack(&addresses);
 							return error;
 							break;
 					}
@@ -183,17 +202,18 @@ num eval(char *str){
 							result = multiply(one, two);
 							break;
 						case '/':
-							result = division(one, two);
+							result = divide(one, two);
 							break;
 						case '%':
 							break;
 						case '=':
-							if(strisempty(&address)){
+							if(strisempty(&addresses)){
 								cleannstack(&numbers);
 								cleancstack(&operators);
 								return error;
 							}
-							strcpy(identifier, strpop(&address)); //address is fetch which is string here;
+							strcpy(identifier, temp = strpop(&addresses)); //address is fetch which is string here;
+							free(temp);
 							insertnum(&symbols, identifier, two); //the number is stored at that address;
 							copy(two, &result);
 							initnum(&one); //as one would be garbage
@@ -229,17 +249,16 @@ num eval(char *str){
 			case ERR:
 				cleannstack(&numbers);
 				cleancstack(&operators);
-				cleancstack(&address);
+				cleanstrstack(&addresses);
 				return error;
 				break;
 
 			default:
 				cleannstack(&numbers);
 				cleancstack(&operators);
-				cleancstack(&address);
+				cleanstrstack(&addresses);
 				return error;
 				break;
-
 		}
 	}
 }

@@ -551,6 +551,8 @@ num divide(num one, num two){
 	if(two.part == NULL){
 		initnum(&result);
 		initnum(&qu);
+		qu.sign = one.sign * two.sign;
+		one.sign = two.sing = 1;
 		return qu;
 	}
 
