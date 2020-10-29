@@ -6,7 +6,7 @@
 #define SIZE_T 100
 
 typedef struct num_node{
-	char *string;
+	char string[20];
 	num one;
 	struct num_node *next;
 }num_node;
