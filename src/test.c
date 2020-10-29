@@ -12,6 +12,8 @@ int main(){
 	insertnum(&table, "sairaj", one);
 	insert_digit(&one, 100);
 	printnum(one);
-	insertnum(&table, "sairaj", one);
+	insertnum(&table, "sajrai", one);
+	printnum(search(table, "sajrai"));
 	printnum(search(table, "sairaj"));
+	printnum(one);
 }

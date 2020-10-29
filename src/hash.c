@@ -12,16 +12,18 @@ void inithash(hashtable *h){
 int hashfuct(char *str){
 	int i = 0, k = 0, l = strlen(str), prime = 631;
 	for(i = 0; i < l; i++){
-		k += str[i];
+		k += (int)str[i] * (i + 1); //weighted sum is considered 
 	}
-	k = ((10 * k + 1000) % prime) % SIZE_T; //to bring somewhat randomness in k
-	printf("%d\n", k);
-	return k;
+	return k % SIZE_T;
 }
 
 	
-void insertnum(hashtable *h, char *str, num one){
+void insertnum(hashtable *h, char *str, num x){
 	int index, flag = 1;
+	num one;
+	/* copy of num is stored not actual so erasing actual num does not erase this */
+	initnum(&one);
+	copy(x, &one);
 	num_node *temp;
 	index = hashfuct(str);
 
@@ -29,7 +31,6 @@ void insertnum(hashtable *h, char *str, num one){
 		temp = (*h)[index];
 
 		while(temp->next != NULL){
-			printf("noooo\n");
 			if(strcmp(temp->string, str) == 0){
 				erasenum(&(temp->one));
 				temp->one = one;
@@ -39,14 +40,11 @@ void insertnum(hashtable *h, char *str, num one){
 			temp = temp->next;
 		}
 		if(flag && strcmp(temp->string, str) == 0){
-			printf("compared\n");
-			//erasenum(&(temp->one)); //makesure that only copy is inserted
+			erasenum(&(temp->one));
 			temp->one = one;
-			printnum(temp->one);
 			flag = 0;
 		}
 		if(flag){
-			printf("flag\n");
 			temp->next = (num_node *)malloc(sizeof(num_node));
 			temp = temp->next;
 			strcpy(temp->string, str);
@@ -55,13 +53,11 @@ void insertnum(hashtable *h, char *str, num one){
 		}
 	}
 	else{
-		printf("yes\n");
 		(*h)[index] =  (num_node *)malloc(sizeof(num_node));
 		temp = (*h)[index];
 		strcpy(temp->string, str);
 		temp->one = one;
 		temp->next = NULL;
-		printf("yes\n");
 	}
 	return;
 }
@@ -70,6 +66,7 @@ num search(hashtable h, char *str){
 	int key;
 	num_node *temp;
 	num error;
+	num one;
 	initnum(&error);
 	error.sign = 2;
 
@@ -78,7 +75,9 @@ num search(hashtable h, char *str){
 
 	while(temp != NULL){
 		if(strcmp(temp->string, str) == 0){
-			return temp->one;
+			/* copy is returned so even if user destroys number it does not affect this */
+			copy(temp->one, &one);
+			return one;
 		}
 		temp = temp->next;
 	}

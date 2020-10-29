@@ -33,7 +33,7 @@ void cleancstack(cstack *op){
 	return;
 }
 
-/* todo division operation is pending */
+/*TODO strstack is pending */
 num eval(char *str){
 	nstack numbers; //stack containing the numbers
 	cstack operators; //stack containing the operators
@@ -41,6 +41,8 @@ num eval(char *str){
 	char identifier[20];
 
 	static num memory[26] = { 0 }; //memory addresses to store a-z variables
+	static hashtable symbols;
+	char identifier[20] = "\0";
 	int storage = -1;
 
 	token t;
@@ -54,7 +56,6 @@ num eval(char *str){
 	initnum(&two);
 	initnstack(&numbers);
 	initcstack(&operators);
-	initcstack(&address);
 
 	error.sign = 2;
 	noprint.sign = 3;
@@ -66,16 +67,15 @@ num eval(char *str){
 				prevpre = currpre;
 				currpre = getprece(t.data.op);
 				if(currpre == EQUAL){
-					if(storage < 0){
+					// string_stack * , char * 
+					if(identifier[0] == '\0' || prevpre != VAR){
 						cleannstack(&numbers);
 						cleancstack(&operators);
-						cleancstack(&address);
 						return error;
 					}
-					cpush(&address, (char)storage);
 					cpush(&operators, t.data.op);
-					storage = -1;
-					break;
+					strpush(&address, identifier);
+					identifier[0] = '\0';
 				}
 				if(currpre == BRACKET && t.data.op == '('){
 					cpush(&operators, t.data.op);
@@ -96,20 +96,19 @@ num eval(char *str){
 								result = multiply(one, two);
 								break;
 							case '/':
-								break;
+								result = division(one, two);
 							case '%':
 								break;
 							case '=':
-								if(cisempty(&address)){
+								if(strisempty(&address)){
 									cleannstack(&numbers);
 									cleancstack(&operators);
-									cleancstack(&address);
 									return error;
 								}
-								storage = (int)cpop(&address);
-								copy(two, memory + storage);
+								strcpy(identifier, strpop(&address)); //address is fetch which is string here;
+								insertnum(&symbols, identifier, two); //the number is stored at that address;
+								initnum(&one); //as one would be garbage
 								copy(two, &result);
-								printflag = 0;
 								break;
 							default:
 								cleannstack(&numbers);
@@ -141,6 +140,7 @@ num eval(char *str){
 							result = multiply(one, two);
 							break;
 						case '/':
+							result = division(one, two);
 							break;
 						case '%':
 							break;
@@ -183,25 +183,24 @@ num eval(char *str){
 							result = multiply(one, two);
 							break;
 						case '/':
+							result = division(one, two);
 							break;
 						case '%':
 							break;
 						case '=':
-							if(cisempty(&address)){
+							if(strisempty(&address)){
 								cleannstack(&numbers);
 								cleancstack(&operators);
-								cleancstack(&address);
 								return error;
 							}
-							storage = (int)cpop(&address);
-							copy(two, memory + storage);
+							strcpy(identifier, strpop(&address)); //address is fetch which is string here;
+							insertnum(&symbols, identifier, two); //the number is stored at that address;
 							copy(two, &result);
-							printflag = 0;
+							initnum(&one); //as one would be garbage
 							break;
 						default:
 							cleannstack(&numbers);
 							cleancstack(&operators);
-							cleancstack(&address);
 							return error;
 							break;
 					}
@@ -220,8 +219,10 @@ num eval(char *str){
 				break;
 
 			case VAR:
-				storage = t.data.op - 'a';
-				copy(memory[storage], &one); //fetch value and make a copy
+				strcpy(identifier, t.data.var);
+				one = search(symbols, identifier); //fetch the value 
+				if(one.sign == error.sign)
+					initnum(&one);
 				npush(&numbers, one); //push it on numbers
 				break;
 
