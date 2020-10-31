@@ -14,6 +14,7 @@ typedef struct token{
 	union{
 		num number;
 		char op;
+		char var[20];
 	}data;
 }token;
 

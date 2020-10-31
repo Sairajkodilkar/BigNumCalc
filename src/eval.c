@@ -31,19 +31,38 @@ void cleancstack(cstack *op){
 		cpop(op);
 	}
 	return;
-}
+}  
 
-/* todo division operation is pending */
+void cleanstrstack(strstack *sts){
+	char *buf;
+	while(!strisempty(sts)){
+		buf = strpop(sts);
+		free(buf);
+	}
+	return;
+}  
+
+
+/*TODO strstack is pending */
 num eval(char *str){
 	nstack numbers; //stack containing the numbers
 	cstack operators; //stack containing the operators
-	cstack address; //stack containing memory addresses where result must be store
+	strstack addresses;
+	char identifier[20] = "\0";
+	char *temp;
 
-	static num memory[26] = { 0 }; //memory addresses to store a-z variables
-	int storage = -1;
+	/* hashtable initialization */
+	static int reinit = 0;
+	static hashtable symbols;
+	if(reinit == 0){
+		inithash(&symbols);
+		reinit = 1;
+	}
 
 	token t;
 	num result, one, two, error, noprint;
+	static int prevtype;
+	int currtype;
 
 	int currpre = LOW, prevpre;
 	char op;
@@ -51,9 +70,10 @@ num eval(char *str){
 
 	initnum(&one);
 	initnum(&two);
+
 	initnstack(&numbers);
 	initcstack(&operators);
-	initcstack(&address);
+	initstrstack(&addresses);
 
 	error.sign = 2;
 	noprint.sign = 3;
@@ -62,22 +82,25 @@ num eval(char *str){
 		t = parse(str);
 		switch(t.type){
 			case OPERATOR:
+				currtype = OPERATOR;
 				prevpre = currpre;
 				currpre = getprece(t.data.op);
 				if(currpre == EQUAL){
-					if(storage < 0){
+					// string_stack * , char * 
+					if(identifier[0] == '\0' || prevtype != VAR){
 						cleannstack(&numbers);
 						cleancstack(&operators);
-						cleancstack(&address);
+						cleanstrstack(&addresses);
 						return error;
 					}
-					cpush(&address, (char)storage);
 					cpush(&operators, t.data.op);
-					storage = -1;
-					break;
+					strpush(&addresses, identifier);
+					identifier[0] = '\0';
+					prevtype = currtype;
 				}
-				if(currpre == BRACKET && t.data.op == '('){
+				else if(currpre == BRACKET && t.data.op == '('){
 					cpush(&operators, t.data.op);
+					prevtype = currtype;
 					break;
 				}
 				else if(currpre == BRACKET && t.data.op == ')'){
@@ -95,25 +118,26 @@ num eval(char *str){
 								result = multiply(one, two);
 								break;
 							case '/':
-								break;
+								result = divide(one, two);
 							case '%':
 								break;
 							case '=':
-								if(cisempty(&address)){
+								if(strisempty(&addresses)){
 									cleannstack(&numbers);
 									cleancstack(&operators);
-									cleancstack(&address);
 									return error;
 								}
-								storage = (int)cpop(&address);
-								copy(two, memory + storage);
+								strcpy(identifier, temp = strpop(&addresses)); //address is fetch which is string here;
+								free(temp);
+								insertnum(&symbols, identifier, two); //the number is stored at that address;
+								initnum(&one); //as one would be garbage
 								copy(two, &result);
-								printflag = 0;
 								break;
 							default:
+								prevtype = currtype;
 								cleannstack(&numbers);
 								cleancstack(&operators);
-								cleancstack(&address);
+								cleanstrstack(&addresses);
 								return error;
 								break;
 						}
@@ -123,6 +147,7 @@ num eval(char *str){
 						initnum(&one);
 						npush(&numbers, result);
 					}
+					prevtype = currtype;
 					break;
 				}
 				else if(currpre < prevpre){
@@ -140,13 +165,14 @@ num eval(char *str){
 							result = multiply(one, two);
 							break;
 						case '/':
+							result = divide(one, two);
 							break;
 						case '%':
 							break;
 						default:
 							cleannstack(&numbers);
 							cleancstack(&operators);
-							cleancstack(&address);
+							cleanstrstack(&addresses);
 							return error;
 							break;
 					}
@@ -162,11 +188,17 @@ num eval(char *str){
 					cpush(&operators, t.data.op);
 					break;
 				}
+				break;
+				prevtype = currtype;
+
 			case NUMBER:
+				currtype = NUMBER;
 				npush(&numbers, t.data.number);
+				prevtype = currtype;
 				break;
 
 			case END:
+				currtype = END;
 				while(!cisempty(&operators)){
 					two = npop(&numbers);
 					one = npop(&numbers);
@@ -182,25 +214,27 @@ num eval(char *str){
 							result = multiply(one, two);
 							break;
 						case '/':
+							result = divide(one, two);
 							break;
 						case '%':
 							break;
 						case '=':
-							if(cisempty(&address)){
+							if(strisempty(&addresses)){
+								prevtype = currtype;
 								cleannstack(&numbers);
 								cleancstack(&operators);
-								cleancstack(&address);
 								return error;
 							}
-							storage = (int)cpop(&address);
-							copy(two, memory + storage);
+							strcpy(identifier, temp = strpop(&addresses)); //address is fetch which is string here;
+							free(temp);
+							insertnum(&symbols, identifier, two); //the number is stored at that address;
 							copy(two, &result);
 							printflag = 0;
 							break;
 						default:
 							cleannstack(&numbers);
+							prevtype = currtype;
 							cleancstack(&operators);
-							cleancstack(&address);
 							return error;
 							break;
 					}
@@ -210,6 +244,7 @@ num eval(char *str){
 					initnum(&two);
 					initnum(&one);
 				}
+				prevtype = currtype;
 				if(printflag){
 					return npop(&numbers);
 				}
@@ -219,25 +254,30 @@ num eval(char *str){
 				break;
 
 			case VAR:
-				storage = t.data.op - 'a';
-				copy(memory[storage], &one); //fetch value and make a copy
+				currtype = VAR;
+				strcpy(identifier, t.data.var);
+				one = search(symbols, identifier); //fetch the value 
+				if(one.sign == error.sign)
+					initnum(&one);
 				npush(&numbers, one); //push it on numbers
+				prevtype = currtype;
 				break;
 
 			case ERR:
+				currtype = ERR;
 				cleannstack(&numbers);
 				cleancstack(&operators);
-				cleancstack(&address);
+				cleanstrstack(&addresses);
+				prevtype = currtype;
 				return error;
 				break;
 
 			default:
 				cleannstack(&numbers);
 				cleancstack(&operators);
-				cleancstack(&address);
+				cleanstrstack(&addresses);
 				return error;
 				break;
-
 		}
 	}
 }

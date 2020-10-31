@@ -4,6 +4,8 @@
 #include "parse.h"
 #include "nstack.h"
 #include "cstack.h"
+#include "strstack.h"
+#include "hash.h"
 
 num eval(char *);
 
