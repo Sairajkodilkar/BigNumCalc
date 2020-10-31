@@ -1,18 +1,29 @@
 #include "eval.h"
-enum precedence {LOW, BRACKET, EQUAL, ADDSUB, MULDIV, MODULO};
+enum precedence {LOW, BRACKET, EQUAL, BOOL, ADDSUB, MULDIV, MODULO};
 
 int getprece(char ch){
 	switch(ch){
 		case '+': case '-':
 			return ADDSUB;
+			break;
 		case '*': case '/':
 			return MULDIV;
+			break;
 		case '%':
 			return MODULO;
+			break;
 		case '(': case ')':
 			return BRACKET;
+			break;
 		case '=':
 			return EQUAL;
+			break;
+		case '<': case '>': case 'l': case 'g': 
+		case 'e': case 'n':
+			return BOOL;
+			break;
+		default:
+			return LOW;
 	}
 	return LOW;
 }
@@ -121,6 +132,24 @@ num eval(char *str){
 								result = divide(one, two);
 							case '%':
 								break;
+							case '<':
+								result = lessthan(one, two);
+								break;
+							case '>':
+								result = greaterthan(one, two);
+								break;
+							case 'l': //specifies less than equal
+								result = lessthaneq(one, two);
+								break;
+							case 'g': //specifies greater than equal
+								result = greaterthaneq(one, two);
+								break;
+							case 'e': //specifies equal
+								result = equal(one, two);
+								break;
+							case 'n':
+								result = notequal(one, two);
+								break;
 							case '=':
 								if(strisempty(&addresses)){
 									cleannstack(&numbers);
@@ -169,6 +198,24 @@ num eval(char *str){
 							break;
 						case '%':
 							break;
+						case '<':
+							result = lessthan(one, two);
+							break;
+						case '>':
+							result = greaterthan(one, two);
+							break;
+						case 'l': //specifies less than equal
+							result = lessthaneq(one, two);
+							break;
+						case 'g': //specifies greater than equal
+							result = greaterthaneq(one, two);
+							break;
+						case 'e': //specifies equal
+							result = equal(one, two);
+							break;
+						case 'n':
+							result = notequal(one, two);
+							break;
 						default:
 							cleannstack(&numbers);
 							cleancstack(&operators);
@@ -216,7 +263,23 @@ num eval(char *str){
 						case '/':
 							result = divide(one, two);
 							break;
-						case '%':
+						case '<':
+							result = lessthan(one, two);
+							break;
+						case '>':
+							result = greaterthan(one, two);
+							break;
+						case 'l': //specifies less than equal
+							result = lessthaneq(one, two);
+							break;
+						case 'g': //specifies greater than equal
+							result = greaterthaneq(one, two);
+							break;
+						case 'e': //specifies equal
+							result = equal(one, two);
+							break;
+						case 'n':
+							result = notequal(one, two);
 							break;
 						case '=':
 							if(strisempty(&addresses)){

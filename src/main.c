@@ -7,6 +7,7 @@ int main(){
 	num result; 
 	int size;
 	char *buf;
+	initconstants();
 
 	while(1){
 	

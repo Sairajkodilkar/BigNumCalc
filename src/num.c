@@ -1,6 +1,17 @@
 #include "num.h"
 #include "unistd.h"
 
+num boolone, boolzero;
+
+void initconstants(){
+	extern num boolone, boolzero;
+	initnum(&boolone);
+	initnum(&boolzero);
+	insert_digit(&boolone, 1);
+	insert_digit(&boolzero, 0);
+}
+
+
 /* void initnum(num *one)
  * use:
  * 		initialise the number;
@@ -166,11 +177,102 @@ int isgreater(num one, num two){
 
 int isgreaterequal(num one, num two){
 	int x;
+	if(one.sign == -1 && two.sign != -1){
+		return 0;
+	}
+	if(two.sign == -1 && one.sign == 1){
+		return 1;
+	}
 	x = __isgreater(one.part, two.part);
 	if(x == 0)
 		return 0;
 	return 1;
 }
+
+int isequal(num one, num two){
+	int x;
+	if(one.sign != two.sign){
+		return 0;
+	}
+	x = __isgreater(one.part, two.part);
+	if(x == 2)
+		return 1;
+	return 0;
+}
+/* following fuction are for users */
+num equal(num one, num two){
+	int x;
+	num boolean;
+	x = isequal(one, two);
+	if(x == 1){
+		copy(boolone, &boolean);
+		return boolean;
+	}
+	copy(boolzero, &boolean);
+	return boolean;
+}
+
+num notequal(num one, num two){
+	int x;
+	num boolean;
+	x = isequal(one, two);
+	if(x == 0){
+		copy(boolone, &boolean);
+		return boolean;
+	}
+	copy(boolzero, &boolean);
+	return boolean;
+}
+
+num greaterthan(num one, num two){
+	int x;
+	num boolean;
+	x = isgreater(one, two);
+	if(x == 1){
+		copy(boolone, &boolean);
+		return boolean;
+	}
+	copy(boolzero, &boolean);
+	return boolean;
+}
+
+num greaterthaneq(num one, num two){
+	int x;
+	num boolean;
+	x = isgreaterequal(one, two);
+	if(x != 0){
+		copy(boolone, &boolean);
+		return boolean;
+	}
+	copy(boolzero, &boolean);
+	return boolean;
+}
+
+num lessthan(num one, num two){
+	int x;
+	num boolean;
+	x = isgreaterequal(one, two);
+	if(x == 0){
+		copy(boolone, &boolean);
+		return boolean;
+	}
+	copy(boolzero, &boolean);
+	return boolean;
+}
+
+num lessthaneq(num one, num two){
+	int x;
+	num boolean;
+	x = isgreater(one, two);
+	if(x == 0){
+		copy(boolone, &boolean);
+		return boolean;
+	}
+	copy(boolzero, &boolean);
+	return boolean;
+}
+/* end of boolean functionsa */
+
 int len(int x){
 	if(x == 0)
 		return 1;

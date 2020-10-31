@@ -161,7 +161,8 @@ token parse(char *str){
 				}
 				break;
 			case '+': case '-': case '*': case '/': case '%':
-			case '(': case ')': case '=':
+			case '(': case ')': case '=': case '<': case '>':
+			case '!':
 				curr = OPERATOR;
 				op_flag += 1;
 				switch(prev){
@@ -171,6 +172,25 @@ token parse(char *str){
 						break;
 
 					case OPERATOR:
+						if(str[i] == '='){
+							switch(op){
+								case '<':
+									op = 'l';
+									break;
+								case '>':
+									op = 'g';
+									break;
+								case '=':
+									op = 'e';
+									break;
+								case '!':
+									op = 'n';
+									break;
+							}
+							prev = curr;
+							i++;
+							continue;
+						}
 						t.type = OPERATOR;
 						t.data.op = op;
 						op = str[i];
