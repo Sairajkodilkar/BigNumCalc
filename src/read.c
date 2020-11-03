@@ -19,6 +19,10 @@ int readline(char **buf, int *n){
 	if(eofflag)
 		return EOF;
 	while((c = getchar()) != '\n' && c != EOF){
+		if(c == '\\'){
+			c = getchar();
+			continue;
+		}
 		if(i >= size){
 			size = size + 2000;
 			*buf = realloc(*buf, size);

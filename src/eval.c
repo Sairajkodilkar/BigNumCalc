@@ -1,5 +1,16 @@
 #include "eval.h"
-enum precedence {LOW, BRACKET, EQUAL, BOOL, ADDSUB, MULDIV, MODULO};
+enum precedence {LOW, CURLY, BRACKET, EQUAL, BOOL, ADDSUB, MULDIV, MODULO};
+enum control {IF = 1, ELSE};
+
+int isspecial(char *str){
+	if(strcmp(str, "if") == 0){
+		return IF;
+	}
+	if(strcmp(str, "else") == 0){
+		return ELSE;
+	}
+	return 0;
+}
 
 int getprece(char ch){
 	switch(ch){
@@ -14,6 +25,9 @@ int getprece(char ch){
 			break;
 		case '(': case ')':
 			return BRACKET;
+			break;
+		case '{': case '}':
+			return CURLY;
 			break;
 		case '=':
 			return EQUAL;
@@ -58,6 +72,7 @@ void cleanstrstack(strstack *sts){
 num eval(char *str){
 	nstack numbers; //stack containing the numbers
 	cstack operators; //stack containing the operators
+	cstack control;
 	strstack addresses;
 	char identifier[20] = "\0";
 	char *temp;
@@ -73,6 +88,7 @@ num eval(char *str){
 	token t;
 	num result, one, two, error, noprint;
 	static int prevtype;
+	static int f;
 	int currtype;
 
 	int currpre = LOW, prevpre;
@@ -84,6 +100,7 @@ num eval(char *str){
 
 	initnstack(&numbers);
 	initcstack(&operators);
+	initcstack(&control);
 	initstrstack(&addresses);
 
 	error.sign = 2;
@@ -179,6 +196,25 @@ num eval(char *str){
 					prevtype = currtype;
 					break;
 				}
+				else if(currpre == BRACKET && t.data.op == '{'){
+					fuct = cpop(&control);
+					if(fuct == IF){
+						one = npop(&numbers);
+						if(!isequal(one, boolzero)){
+							eval(str);
+						}
+						else{
+							while(1){
+								t = parse(str);
+								if(t.type == OPERATOR && t.data.op == '}')
+									break;
+							}
+						}
+					}
+				}
+				else if(currpre == BRACKET && t.data.op == '}'){
+
+			
 				else if(currpre < prevpre){
 					two = npop(&numbers);
 					one = npop(&numbers);
@@ -317,6 +353,10 @@ num eval(char *str){
 				break;
 
 			case VAR:
+				if((f = isspecial(t.data.var))){
+					cpush(&control, f);
+					break;
+				}
 				currtype = VAR;
 				strcpy(identifier, t.data.var);
 				one = search(symbols, identifier); //fetch the value 
