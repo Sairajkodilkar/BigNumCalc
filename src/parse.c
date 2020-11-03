@@ -367,7 +367,7 @@ token parse(char *str){
 						k = 0;
 						t.type = OPERATOR;
 						t.data.op = op;
-						identifier[k++]= str[i];
+						identifier[k++]= str[i++];
 						prev = curr;
 						return t;
 						break;
@@ -377,7 +377,7 @@ token parse(char *str){
 						insertbuf(&number, buf, j, 0);
 						j = 0;
 						k = 0;
-						identifier[k++]= str[i];
+						identifier[k++]= str[i++];
 						t.type = NUMBER;
 						t.data.number = number;
 						prev = curr;
@@ -387,7 +387,7 @@ token parse(char *str){
 					case ERR:
 						t.type = ERR;
 						k = 0;
-						identifier[k++]= str[i];
+						identifier[k++]= str[i++];
 						prev = curr;
 						return t;
 						break;
@@ -397,9 +397,8 @@ token parse(char *str){
 							i++;
 							break;
 						}
-						identifier[k++]= str[i];
+						identifier[k++]= str[i++];
 						prev = curr;
-						i++;
 						break;
 
 					default: 

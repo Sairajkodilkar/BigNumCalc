@@ -76,7 +76,7 @@ num eval(char *str){
 	int currtype;
 
 	int currpre = LOW, prevpre;
-	char op;
+	char op, x;
 	int printflag = 1;
 
 	initnum(&one);
@@ -94,7 +94,14 @@ num eval(char *str){
 		switch(t.type){
 			case OPERATOR:
 				currtype = OPERATOR;
-				prevpre = currpre;
+				if(!cisempty(&operators)){
+					x = cpop(&operators);
+					cpush(&operators, x);
+					prevpre = getprece(x);
+				}
+				else{ 
+					prevpre = currpre;
+				}
 				currpre = getprece(t.data.op);
 				if(currpre == EQUAL){
 					// string_stack * , char * 
