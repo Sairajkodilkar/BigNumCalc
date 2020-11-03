@@ -210,6 +210,14 @@ token parse(char *str){
 						return t;
 						break;
 
+					case FRAC:
+						t.type = NUMBER;
+						t.data.number = number;
+						prev = curr;
+						op = str[i++];
+						return t;
+						break;
+
 					case VAR:
 						op = str[i++];
 						t.type = VAR;
@@ -258,6 +266,15 @@ token parse(char *str){
 						t.type = NUMBER;
 						t.data.number = number;
 						prev = curr;
+						i++;
+						return t;
+						break;
+
+					case FRAC:
+						t.type = NUMBER;
+						t.data.number = number;
+						prev = curr;
+						i++;
 						return t;
 						break;
 
@@ -378,6 +395,15 @@ token parse(char *str){
 						j = 0;
 						k = 0;
 						identifier[k++]= str[i++];
+						t.type = NUMBER;
+						t.data.number = number;
+						prev = curr;
+						return t;
+						break;
+						
+					case FRAC:
+						k = 0;
+						identifier[k++] = str[i++];
 						t.type = NUMBER;
 						t.data.number = number;
 						prev = curr;
