@@ -1,8 +1,20 @@
 # BASIC CALCULATOR
-Implementing High precision calculator with basic fuctionalities
+Implementing High precision calculator with basic fuctionalities  
+The calculator take cares of precedance of operators as well as brackets  
+variables which are less than 18 characters and contains a-z A-z or _ are valid identifiers
 
 ## Github link  
 [Sairajkodilkar](https://github.com/Sairajkodilkar/Project.git)
+
+## How to build and run
+Makefile is provided. Type following command in shell and the executable file **calc** is created 
+```shell
+make
+```
+type following command to run the program
+```shell
+./calc
+```
 
 ## Operations supported
     1. Addition (+)
