@@ -104,7 +104,6 @@ num eval(char *str){
 				}
 				currpre = getprece(t.data.op);
 				if(currpre == EQUAL){
-					// string_stack * , char * 
 					if(identifier[0] == '\0' || prevtype != VAR){
 						cleannstack(&numbers);
 						cleancstack(&operators);

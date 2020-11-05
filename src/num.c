@@ -199,7 +199,7 @@ int isequal(num one, num two){
 		return 1;
 	return 0;
 }
-/* following fuction are for users */
+/* following function are for users */
 num equal(num one, num two){
 	int x;
 	num boolean;
