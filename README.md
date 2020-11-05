@@ -15,6 +15,10 @@ type following command to run the program
 ```shell
 ./calc
 ```
+to remove object files( including calc ) type 
+```shell
+make clean
+```
 
 ## Operations supported
     1. Addition (+)
