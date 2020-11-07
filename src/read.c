@@ -27,6 +27,9 @@ int readline(char **buf, int *n){
 	}
 	if(c == EOF)
 		eofflag = 1;
+	if(eofflag && i == 0){
+		return EOF;
+	}
 	*n = size;
 	(*buf)[i] = '\0';
 	size = 2000; //line is complete so reset the size

@@ -135,7 +135,7 @@ num eval(char *str){
 								result = multiply(one, two);
 								break;
 							case '/':
-								result = divide(one, two);
+								result = divide(two, one);
 							case '%':
 								break;
 							case '<':
@@ -200,7 +200,7 @@ num eval(char *str){
 							result = multiply(one, two);
 							break;
 						case '/':
-							result = divide(one, two);
+							result = divide(two, one);
 							break;
 						case '%':
 							break;
@@ -267,7 +267,7 @@ num eval(char *str){
 							result = multiply(one, two);
 							break;
 						case '/':
-							result = divide(one, two);
+							result = divide(two, one);
 							break;
 						case '<':
 							result = lessthan(one, two);

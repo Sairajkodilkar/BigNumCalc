@@ -8,10 +8,19 @@ int main(){
 	int size;
 	char *buf;
 	initconstants();
+	printf("HIGH PRECISION CALCULATOR\npress CTRL-D to exit\n\n");
 
 	while(1){
-	
-		if((readline(&buf, &size)) == 0 || buf[0] == '\n' || buf[0] == EOF){
+
+		printf(">>> ");
+		size = readline(&buf, &size); 
+
+		if(size == 0){
+			continue;
+		}
+
+		if(size == EOF){
+			printf("\n");
 			return 0;
 		}
 
@@ -28,6 +37,6 @@ int main(){
 			printnum(result);
 			erasenum(&result);
 		}
-		free(buf);
+		free(buf); 
 	}
 }

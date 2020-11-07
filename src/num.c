@@ -271,8 +271,12 @@ num lessthaneq(num one, num two){
 	copy(boolzero, &boolean);
 	return boolean;
 }
-/* end of boolean functionsa */
+/* end of boolean functions */
 
+/* 
+ * to compute the length of digit 
+ * NOTE: supporting function
+ */
 int len(int x){
 	if(x == 0)
 		return 1;
@@ -644,6 +648,14 @@ num multiply(num one, num two){
 	prev.sign = one.sign * two.sign;
 	return prev;
 }
+
+/* num divide(num one, num two)
+ * precondition:
+ * 		one: divisor
+ * 		two: divident
+ * postcondition:
+ * 		two / one returned
+ */
 
 
 num divide(num one, num two){
