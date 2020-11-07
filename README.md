@@ -27,7 +27,22 @@ make clean
     4. Division (/)
     5. Boolean (==, <=, >=, >, <)
     6. Assignment (=)
-    
+   
+## Valid syntax
+```
+>>> ((3 + 10) * 4) - 66)
+>>> a = 124327893248904.92873
+>>> b = 24873421988324898478723408.09823748
+>>> a = a + b
+>>> b = b * a * ( (b + a) * a) / b
+>>> output = a < b
+>>> output = b > a
+>>> output = a <= b
+>>> output = b >= a
+>>> output = a == b
+
+```
+
 ## Implemantion details
 
 ### Basic data structures used
