@@ -300,6 +300,7 @@ token parse(char *str){
 						prev = ERR;
 						i++;
 						t.type = ERR;
+						return t;
 						break;
 				}
 				break;
