@@ -246,9 +246,11 @@ token parse(char *str){
 				curr = END;
 				switch(prev){
 					case START: case SPACE:
+						free(buf);
+						i = 0;
 						t.type = END;
 						prev = curr;
-						i++;
+						return t;
 						break;
 
 					case OPERATOR:
@@ -400,7 +402,7 @@ token parse(char *str){
 						prev = curr;
 						return t;
 						break;
-						
+
 					case FRAC:
 						k = 0;
 						identifier[k++] = str[i++];
