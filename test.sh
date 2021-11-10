@@ -34,10 +34,37 @@ testing() {
 		esac
 	
 	done
+	echo $result
 }
 
+echo "Test 1"
 operand1=103112142352351351351351351515135
 operand2=112413513513513513513513513513515
-
 testing $operand1 $operand2
+
+echo "Test 2"
+operand1=-103112142352351351351351351515135
+operand2=112413513513513513513513513513515
+testing $operand1 $operand2
+
+echo "Test 3"
+operand1=0
+operand2=-112413513513513513513513513513515
+testing $operand1 $operand2
+
+echo "Test 4"
+operand1=0
+operand2=0
+testing $operand1 $operand2
+
+echo "Test 5"
+operand1=0
+operand2=2
+result=$(echo "$operand1 & $operand2" | ./calc)
+if [ $result = "BAD EXPRESSION" ];then
+	echo "Passed Invalid operation test"
+else
+	echo "Failed Invalid operation test"
+fi
+
 
