@@ -227,7 +227,6 @@ token parse(char *str){
 						return t;
 						break;
 
-
 					case ERR:
 						t.type = ERR;
 						op = str[i++];

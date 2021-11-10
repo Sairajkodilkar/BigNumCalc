@@ -8,11 +8,11 @@ int main(){
 	int size;
 	char *buf;
 	initconstants();
-	printf("HIGH PRECISION CALCULATOR\npress CTRL-D to exit\n\n");
+	//printf("HIGH PRECISION CALCULATOR\npress CTRL-D to exit\n\n");
 
 	while(1){
 
-		printf(">>> ");
+		//printf(">>> ");
 		size = readline(&buf, &size); 
 
 		if(size == 0){
